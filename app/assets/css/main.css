@@ -1,0 +1,19 @@
+:root {
+  --color-primary: #e91e63;
+  --color-page: #eef1f6;
+  --color-card: #ffffff;
+  --color-text: #1e293b;
+  --color-muted: #64748b;
+  --radius: 16px;
+  --font: 'Vazirmatn', sans-serif;
+}
+
+html {
+  font-family: var(--font);
+  background: var(--color-page);
+  color: var(--color-text);
+}
+
+body {
+  margin: 0;
+}
