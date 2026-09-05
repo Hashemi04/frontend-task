@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { mockProducts } from '~/data/mockProducts'
 
-useHead({
+useSeoMeta({
   title: 'لیست محصولات',
+  description: 'جستجو و مشاهده فهرست محصولات فروشگاه.',
+  ogTitle: 'لیست محصولات',
+  ogLocale: 'fa_IR',
 })
 </script>
 

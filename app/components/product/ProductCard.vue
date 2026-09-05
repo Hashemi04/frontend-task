@@ -3,6 +3,7 @@ import type { Product } from '~/types/product'
 
 defineProps<{
   product: Product
+  priority?: boolean
 }>()
 </script>
 
@@ -12,11 +13,16 @@ defineProps<{
       class="block w-full aspect-[4/3] object-contain p-4"
       :src="product.image"
       :alt="product.title"
-      loading="lazy"
+      :loading="priority ? 'eager' : 'lazy'"
+      :fetchpriority="priority ? 'high' : 'auto'"
+      width="400"
+      height="300"
     >
     <div class="flex flex-1 flex-col gap-4 px-4 pb-4">
       <h2 class="m-0 line-clamp-2 text-start text-[0.95rem] font-semibold leading-relaxed">
-        {{ product.title }}
+        <NuxtLink :to="`/products/${product.id}`" class="hover:text-primary">
+          {{ product.title }}
+        </NuxtLink>
       </h2>
       <BaseButton
         variant="outline"

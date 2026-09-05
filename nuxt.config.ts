@@ -16,6 +16,15 @@ export default defineNuxtConfig({
         lang: 'fa',
         dir: 'rtl',
       },
+      charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1',
+      titleTemplate: '%s',
+      meta: [
+        {
+          name: 'description',
+          content: 'فهرست و جزئیات محصولات از فروشگاه آزمایشی Fake Store.',
+        },
+      ],
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous' },
