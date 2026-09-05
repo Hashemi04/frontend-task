@@ -22,37 +22,27 @@ watch(
     <div
       class="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-4 py-3 md:px-6"
     >
-      <div class="flex items-center gap-6">
+      <nav class="hidden items-center gap-5 md:flex" aria-label="منوی اصلی">
         <NuxtLink
-          to="/"
-          class="flex size-10 items-center justify-center rounded-full text-primary"
-          aria-label="خانه"
+          v-for="item in navItems"
+          :key="item.to"
+          :to="item.to"
+          class="relative flex flex-col items-center gap-1 px-1 text-xs font-medium transition-colors"
+          :class="
+            isActive(item.to) ? 'text-primary' : 'text-ink hover:text-primary'
+          "
         >
-          <IconHome class="size-6" />
+          <component :is="navIcons[item.icon]" class="size-5" />
+          {{ item.label }}
+          <span
+            v-if="isActive(item.to)"
+            class="absolute -bottom-1 size-1.5 rounded-full bg-primary"
+          />
         </NuxtLink>
-
-        <nav class="hidden items-center gap-5 md:flex" aria-label="منوی اصلی">
-          <NuxtLink
-            v-for="item in navItems"
-            :key="item.to"
-            :to="item.to"
-            class="relative flex flex-col items-center gap-1 px-1 text-xs font-medium transition-colors"
-            :class="
-              isActive(item.to) ? 'text-primary' : 'text-ink hover:text-primary'
-            "
-          >
-            <component :is="navIcons[item.icon]" class="size-5" />
-            {{ item.label }}
-            <span
-              v-if="isActive(item.to)"
-              class="absolute -bottom-1 size-1.5 rounded-full bg-primary"
-            />
-          </NuxtLink>
-        </nav>
-      </div>
+      </nav>
 
       <div class="flex items-center gap-2">
-        <BaseButton :href="PHONE_HREF">
+        <BaseButton :to="PHONE_HREF">
           <IconPhone class="size-4" />
           تماس
         </BaseButton>
