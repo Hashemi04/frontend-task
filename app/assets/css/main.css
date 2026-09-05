@@ -22,3 +22,23 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans);
 }
+
+.drawer-enter-active,
+.drawer-leave-active {
+  transition: opacity 220ms ease;
+}
+
+.drawer-enter-active .drawer-panel,
+.drawer-leave-active .drawer-panel {
+  transition: transform 220ms ease;
+}
+
+.drawer-enter-from,
+.drawer-leave-to {
+  opacity: 0;
+}
+
+.drawer-enter-from .drawer-panel,
+.drawer-leave-to .drawer-panel {
+  transform: translateX(100%);
+}

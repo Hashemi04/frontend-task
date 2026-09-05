@@ -22,6 +22,17 @@ watch(
     <div
       class="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-4 py-3 md:px-6"
     >
+      <button
+        type="button"
+        class="inline-flex size-10 items-center justify-center rounded-full text-ink md:hidden"
+        :aria-expanded="menuOpen"
+        aria-controls="mobile-nav"
+        aria-label="منو"
+        @click="menuOpen = true"
+      >
+        <IconMenu class="size-6" />
+      </button>
+
       <nav class="hidden items-center gap-5 md:flex" aria-label="منوی اصلی">
         <NuxtLink
           v-for="item in navItems"
@@ -41,23 +52,10 @@ watch(
         </NuxtLink>
       </nav>
 
-      <div class="flex items-center gap-2">
-        <BaseButton :to="PHONE_HREF">
-          <IconPhone class="size-4" />
-          تماس
-        </BaseButton>
-
-        <button
-          type="button"
-          class="inline-flex size-10 items-center justify-center rounded-full text-ink md:hidden"
-          :aria-expanded="menuOpen"
-          aria-controls="mobile-nav"
-          aria-label="منو"
-          @click="menuOpen = true"
-        >
-          <IconMenu class="size-6" />
-        </button>
-      </div>
+      <BaseButton :to="PHONE_HREF">
+        <IconPhone class="size-4" />
+        تماس
+      </BaseButton>
     </div>
 
     <MobileNav :open="menuOpen" @close="menuOpen = false" />
