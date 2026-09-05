@@ -8,6 +8,12 @@ const emit = defineEmits<{
   close: [];
 }>();
 
+function close() {
+  emit("close");
+}
+
+useHistoryClose(() => props.open, close);
+
 watch(
   () => props.open,
   (isOpen) => {
@@ -20,7 +26,7 @@ watch(
 
 function onKeydown(event: KeyboardEvent) {
   if (props.open && event.key === "Escape") {
-    emit("close");
+    close();
   }
 }
 
@@ -44,7 +50,7 @@ onUnmounted(() => {
           type="button"
           class="absolute inset-0 bg-ink/40"
           aria-label="بستن"
-          @click="emit('close')"
+          @click="close"
         />
         <aside
           role="dialog"
