@@ -1,19 +1,24 @@
-:root {
-  --color-primary: #e91e63;
-  --color-page: #eef1f6;
-  --color-card: #ffffff;
-  --color-text: #1e293b;
-  --color-muted: #64748b;
-  --radius: 16px;
-  --font: 'Vazirmatn', sans-serif;
-}
+@import "tailwindcss";
 
-html {
-  font-family: var(--font);
-  background: var(--color-page);
-  color: var(--color-text);
+/* Values are eyeballed from the Figma screenshots and should be replaced
+   with the exact tokens once sampled in Figma. */
+@theme {
+  --font-sans: 'Vazirmatn', sans-serif;
+
+  --color-primary: #e91e63;
+  --color-primary-soft: #fce4ec;
+  --color-page: #eef1f6;
+  --color-surface: #ffffff;
+  --color-ink: #1e293b;
+  --color-muted: #64748b;
+  --color-line: #e2e8f0;
+
+  --radius-card: 16px;
+  --shadow-card: 0 8px 24px rgb(15 23 42 / 6%);
 }
 
 body {
-  margin: 0;
+  background: var(--color-page);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
 }
