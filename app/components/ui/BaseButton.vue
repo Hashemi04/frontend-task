@@ -7,8 +7,9 @@ const props = withDefaults(
     to?: string
     block?: boolean
     decorative?: boolean
+    type?: 'button' | 'submit'
   }>(),
-  { variant: 'solid', block: false, decorative: false },
+  { variant: 'solid', block: false, decorative: false, type: 'button' },
 )
 
 const variantClasses: Record<Variant, string> = {
@@ -32,7 +33,7 @@ const classes = computed(() => [
   <span v-else-if="decorative" :class="classes">
     <slot />
   </span>
-  <button v-else type="button" :class="classes">
+  <button v-else :type="props.type" :class="classes">
     <slot />
   </button>
 </template>

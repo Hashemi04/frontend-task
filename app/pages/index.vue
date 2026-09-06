@@ -7,6 +7,7 @@ usePageSeo({
 })
 
 const url = useRequestURL()
+const { query, filteredProducts, setQuery } = useProductFilters(mockProducts)
 
 useHead({
   script: [
@@ -29,7 +30,28 @@ useHead({
 
 <template>
   <div class="mx-auto max-w-[1200px] px-4 pt-5 pb-10 md:px-6 md:pt-7 md:pb-12">
-    <h1 class="mb-5 text-xl font-bold">لیست محصولات</h1>
-    <ProductGrid :products="mockProducts" />
+    <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-6">
+      <aside class="w-full shrink-0 lg:w-[17.5rem]">
+        <SearchCard
+          :applied="query"
+          @submit="setQuery"
+          @clear="setQuery('')"
+        />
+      </aside>
+
+      <div class="min-w-0 flex-1">
+        <h1 class="mb-5 text-xl font-bold">لیست محصولات</h1>
+        <ProductGrid
+          v-if="filteredProducts.length"
+          :products="filteredProducts"
+        />
+        <StateMessage
+          v-else
+          status="empty"
+          title="محصولی پیدا نشد"
+          description="محصولی با این جستجو پیدا نشد."
+        />
+      </div>
+    </div>
   </div>
 </template>
