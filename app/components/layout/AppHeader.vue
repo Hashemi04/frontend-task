@@ -3,11 +3,13 @@ import { navItems, PHONE_HREF } from "~/data/nav";
 
 const route = useRoute();
 const menuOpen = ref(false);
+const searchOpen = ref(false);
 
 watch(
   () => route.fullPath,
   () => {
     menuOpen.value = false;
+    searchOpen.value = false;
   },
 );
 </script>
@@ -43,12 +45,25 @@ watch(
         />
       </nav>
 
-      <BaseButton :to="PHONE_HREF">
-        <IconPhone class="size-4" />
-        تماس
-      </BaseButton>
+      <div class="flex items-center gap-1">
+        <button
+          type="button"
+          class="inline-flex size-10 items-center justify-center rounded-full text-ink lg:hidden"
+          :aria-expanded="searchOpen"
+          aria-controls="mobile-product-search"
+          aria-label="جستجو"
+          @click="searchOpen = true"
+        >
+          <IconSearch class="size-5" />
+        </button>
+        <BaseButton :to="PHONE_HREF">
+          <IconPhone class="size-4" />
+          تماس
+        </BaseButton>
+      </div>
     </div>
 
     <MobileNav :open="menuOpen" @close="menuOpen = false" />
+    <MobileSearch :open="searchOpen" @close="searchOpen = false" />
   </header>
 </template>

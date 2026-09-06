@@ -24,16 +24,9 @@ const {
 
 const filtersOpen = ref(false)
 
-const appliedCount = computed(() => {
-  let count = 0
-  if (query.value) {
-    count += 1
-  }
-  if (appliedSort.value) {
-    count += 1
-  }
-  return count + selectedCategories.value.length
-})
+const appliedCount = computed(
+  () => (appliedSort.value ? 1 : 0) + selectedCategories.value.length,
+)
 
 useHead({
   script: [
@@ -113,39 +106,50 @@ useHead({
 
     <BaseDrawer
       placement="bottom"
+      expandable
       :open="filtersOpen"
       title="فیلترها"
       @close="filtersOpen = false"
     >
-      <div id="mobile-filters" class="flex min-h-0 flex-1 flex-col">
-        <div class="flex flex-col items-center px-4 pt-3">
-          <span class="mb-3 h-1 w-10 rounded-full bg-line" aria-hidden="true" />
-          <div class="mb-4 flex w-full items-center justify-between">
-            <p class="font-semibold">فیلترها</p>
-            <button
-              type="button"
-              class="flex size-9 cursor-pointer items-center justify-center rounded-full text-ink"
-              aria-label="بستن فیلترها"
-              @click="filtersOpen = false"
-            >
-              <IconClose class="size-5" />
-            </button>
+      <template #default="{ expanded }">
+        <div id="mobile-filters" class="flex min-h-0 flex-1 flex-col">
+          <div
+            data-sheet-handle
+            class="flex touch-none select-none flex-col items-center px-4"
+            :class="expanded ? 'pt-[max(0.75rem,env(safe-area-inset-top))]' : 'pt-3'"
+          >
+            <span
+              class="mb-3 h-1.5 w-12 cursor-grab rounded-full bg-line active:cursor-grabbing"
+              aria-hidden="true"
+            />
+            <div class="mb-4 flex w-full items-center justify-between">
+              <p class="font-semibold">فیلترها</p>
+              <button
+                type="button"
+                class="flex size-9 cursor-pointer items-center justify-center rounded-full text-ink"
+                aria-label="بستن فیلترها"
+                @click="filtersOpen = false"
+              >
+                <IconClose class="size-5" />
+              </button>
+            </div>
+          </div>
+          <div class="min-h-0 flex-1 overflow-y-auto px-4 pb-6">
+            <FilterSidebar
+              sort-name="product-sort-mobile"
+              :show-search="false"
+              :query="query"
+              :sort="sort"
+              :selected-categories="selectedCategories"
+              :category-counts="categoryCounts"
+              @search="setQuery"
+              @clear-search="setQuery('')"
+              @sort="setSort"
+              @toggle-category="toggleCategory"
+            />
           </div>
         </div>
-        <div class="min-h-0 flex-1 overflow-y-auto px-4 pb-6">
-          <FilterSidebar
-            sort-name="product-sort-mobile"
-            :query="query"
-            :sort="sort"
-            :selected-categories="selectedCategories"
-            :category-counts="categoryCounts"
-            @search="setQuery"
-            @clear-search="setQuery('')"
-            @sort="setSort"
-            @toggle-category="toggleCategory"
-          />
-        </div>
-      </div>
+      </template>
     </BaseDrawer>
   </div>
 </template>
