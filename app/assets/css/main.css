@@ -15,6 +15,7 @@
 
   --radius-card: 16px;
   --shadow-card: 0 8px 24px rgb(15 23 42 / 6%);
+  --max-height-hero: 28rem;
 }
 
 body {
