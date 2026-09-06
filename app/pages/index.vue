@@ -1,11 +1,29 @@
 <script setup lang="ts">
 import { mockProducts } from '~/data/mockProducts'
 
-useSeoMeta({
+usePageSeo({
   title: 'لیست محصولات',
   description: 'جستجو و مشاهده فهرست محصولات فروشگاه.',
-  ogTitle: 'لیست محصولات',
-  ogLocale: 'fa_IR',
+})
+
+const url = useRequestURL()
+
+useHead({
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        itemListElement: mockProducts.map((product, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          url: `${url.origin}/products/${product.id}`,
+          name: product.title,
+        })),
+      }),
+    },
+  ],
 })
 </script>
 

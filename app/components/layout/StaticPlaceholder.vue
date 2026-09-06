@@ -1,6 +1,7 @@
 <script setup lang="ts">
 defineProps<{
   title: string
+  description?: string
 }>()
 </script>
 
@@ -9,8 +10,7 @@ defineProps<{
     <BaseCard class="p-6">
       <h1 class="mb-3 text-xl font-bold">{{ title }}</h1>
       <p class="text-sm leading-7 text-muted">
-        این صفحه در طراحی Figma وجود دارد ولی دادهٔ Fake Store برای آن نیست.
-        لینک‌ها واقعی هستند تا منوی موبایل کار کند.
+        {{ description ?? 'این بخش به‌زودی تکمیل می‌شود.' }}
       </p>
     </BaseCard>
   </div>

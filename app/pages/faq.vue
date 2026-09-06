@@ -1,7 +1,13 @@
 <script setup lang="ts">
-useHead({ title: 'سوالات متداول' })
+usePageSeo({
+  title: 'سوالات متداول',
+  description: 'پاسخ پرسش‌های رایج درباره محصولات، سفارش و ارسال.',
+})
 </script>
 
 <template>
-  <StaticPlaceholder title="سوالات متداول" />
+  <StaticPlaceholder
+    title="سوالات متداول"
+    description="پاسخ پرسش‌های رایج درباره محصولات، سفارش و ارسال به‌زودی در این صفحه قرار می‌گیرد."
+  />
 </template>
