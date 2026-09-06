@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { navItems, PHONE_HREF } from '~/data/nav'
-import { navIcons } from '~/data/navIcons'
 
 defineProps<{
   open: boolean
@@ -9,12 +8,6 @@ defineProps<{
 const emit = defineEmits<{
   close: []
 }>()
-
-const route = useRoute()
-
-function isActive(to: string) {
-  return to === '/' ? route.path === '/' : route.path.startsWith(to)
-}
 </script>
 
 <template>
@@ -33,16 +26,14 @@ function isActive(to: string) {
       </div>
 
       <nav class="flex flex-col gap-1" aria-label="منوی موبایل">
-        <NuxtLink
+        <NavItem
           v-for="item in navItems"
           :key="item.to"
+          stacked
           :to="item.to"
-          class="flex items-center gap-2 rounded-card px-3 py-3 text-sm font-medium"
-          :class="isActive(item.to) ? 'bg-primary-soft text-primary' : 'text-ink hover:bg-page'"
-        >
-          <component :is="navIcons[item.icon]" class="size-5" />
-          {{ item.label }}
-        </NuxtLink>
+          :label="item.label"
+          :icon="item.icon"
+        />
       </nav>
 
       <BaseButton class="mt-auto" :to="PHONE_HREF" block>
