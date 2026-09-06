@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { mockProducts } from "~/data/mockProducts";
+import { mockCategories, mockProducts } from '~/data/mockProducts'
 
 usePageSeo({
   title: "لیست محصولات",
@@ -11,12 +11,16 @@ const {
   query,
   sort,
   appliedSort,
+  selectedCategories,
+  categoryCounts,
   hasAppliedFilters,
   filteredProducts,
   setQuery,
   setSort,
   clearSort,
-} = useProductFilters(mockProducts);
+  toggleCategory,
+  clearCategory,
+} = useProductFilters(mockProducts, mockCategories);
 
 useHead({
   script: [
@@ -43,9 +47,12 @@ useHead({
       <FilterSidebar
         :query="query"
         :sort="sort"
+        :selected-categories="selectedCategories"
+        :category-counts="categoryCounts"
         @search="setQuery"
         @clear-search="setQuery('')"
         @sort="setSort"
+        @toggle-category="toggleCategory"
       />
 
       <div class="min-w-0 flex-1">
@@ -53,8 +60,10 @@ useHead({
           v-if="hasAppliedFilters"
           :query="query"
           :sort="appliedSort"
+          :categories="selectedCategories"
           @clear-search="setQuery('')"
           @clear-sort="clearSort"
+          @clear-category="clearCategory"
         />
         <h1 v-else class="mb-5 text-xl font-bold">لیست محصولات</h1>
         <ProductGrid
@@ -65,7 +74,7 @@ useHead({
           v-else
           status="empty"
           title="محصولی پیدا نشد"
-          description="محصولی با این جستجو پیدا نشد."
+          description="محصولی با این فیلتر پیدا نشد."
         />
       </div>
     </div>

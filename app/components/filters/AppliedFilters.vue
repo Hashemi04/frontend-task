@@ -4,11 +4,13 @@ import type { SortKey } from '~/composables/useProductFilters'
 defineProps<{
   query: string
   sort: SortKey | null
+  categories: string[]
 }>()
 
 const emit = defineEmits<{
   clearSearch: []
   clearSort: []
+  clearCategory: [category: string]
 }>()
 
 function sortLabel(sort: SortKey) {
@@ -44,6 +46,17 @@ function sortLabel(sort: SortKey) {
         >
           <IconSort class="size-3.5 shrink-0" />
           <span>{{ sortLabel(sort) }}</span>
+          <IconClose class="size-3 shrink-0" />
+        </button>
+      </li>
+      <li v-for="category in categories" :key="category">
+        <button
+          type="button"
+          class="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-primary-soft py-1 pe-2.5 ps-2 text-xs text-ink"
+          :aria-label="`حذف دسته ${category}`"
+          @click="emit('clearCategory', category)"
+        >
+          <span>{{ category }}</span>
           <IconClose class="size-3 shrink-0" />
         </button>
       </li>

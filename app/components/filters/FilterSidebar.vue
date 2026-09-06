@@ -4,12 +4,15 @@ import type { SortKey } from '~/composables/useProductFilters'
 defineProps<{
   query: string
   sort: SortKey
+  selectedCategories: string[]
+  categoryCounts: { category: string, count: number }[]
 }>()
 
 const emit = defineEmits<{
   search: [value: string]
   clearSearch: []
   sort: [value: SortKey]
+  toggleCategory: [category: string]
 }>()
 </script>
 
@@ -23,6 +26,11 @@ const emit = defineEmits<{
     <SortCard
       :selected="sort"
       @select="emit('sort', $event)"
+    />
+    <CategoryCard
+      :categories="categoryCounts"
+      :selected="selectedCategories"
+      @toggle="emit('toggleCategory', $event)"
     />
   </aside>
 </template>
