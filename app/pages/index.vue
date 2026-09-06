@@ -7,7 +7,7 @@ usePageSeo({
 })
 
 const url = useRequestURL()
-const { query, filteredProducts, setQuery } = useProductFilters(mockProducts)
+const { query, sort, filteredProducts, setQuery, setSort } = useProductFilters(mockProducts)
 
 useHead({
   script: [
@@ -31,12 +31,13 @@ useHead({
 <template>
   <div class="mx-auto max-w-[1200px] px-4 pt-5 pb-10 md:px-6 md:pt-7 md:pb-12">
     <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-6">
-      <aside class="w-full shrink-0 lg:w-[17.5rem]">
+      <aside class="flex w-full shrink-0 flex-col gap-4 lg:w-[17.5rem]">
         <SearchCard
           :applied="query"
           @submit="setQuery"
           @clear="setQuery('')"
         />
+        <SortCard :selected="sort" @select="setSort" />
       </aside>
 
       <div class="min-w-0 flex-1">
