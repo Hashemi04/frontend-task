@@ -1,13 +1,8 @@
 <script setup lang="ts">
 import { navItems, PHONE_HREF } from "~/data/nav";
-import { navIcons } from "~/data/navIcons";
 
 const route = useRoute();
 const menuOpen = ref(false);
-
-function isActive(to: string) {
-  return to === "/" ? route.path === "/" : route.path.startsWith(to);
-}
 
 watch(
   () => route.fullPath,
@@ -36,27 +31,16 @@ watch(
       </button>
 
       <nav
-        class="hidden items-center gap-8 lg:gap-12 md:flex"
+        class="hidden items-center gap-8 md:flex lg:gap-12"
         aria-label="منوی اصلی"
       >
-        <NuxtLink
+        <NavItem
           v-for="item in navItems"
           :key="item.to"
           :to="item.to"
-          class="relative flex items-center gap-2 text-sm font-medium transition-colors"
-          :class="
-            isActive(item.to) ? 'text-primary' : 'text-ink hover:text-primary'
-          "
-        >
-          <component :is="navIcons[item.icon]" class="size-4 shrink-0" />
-          <span class="relative">
-            {{ item.label }}
-            <span
-              v-if="isActive(item.to)"
-              class="absolute top-full left-1/2 mt-1.5 size-1.5 -translate-x-1/2 rounded-full bg-primary"
-            />
-          </span>
-        </NuxtLink>
+          :label="item.label"
+          :icon="item.icon"
+        />
       </nav>
 
       <BaseButton :to="PHONE_HREF">

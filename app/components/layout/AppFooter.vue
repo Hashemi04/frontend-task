@@ -79,9 +79,10 @@ const bottomSocial: { href: string; label: string; icon: Component }[] = [
             <a
               :href="link.href"
               class="flex items-center gap-2.5 transition-colors hover:text-primary"
+              rel="nofollow noopener"
             >
               <span
-                class="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#eef2f6] text-ink"
+                class="flex size-7 shrink-0 items-center justify-center rounded-full bg-page text-ink"
               >
                 <component :is="link.icon" class="size-3.5" />
               </span>
@@ -106,6 +107,7 @@ const bottomSocial: { href: string; label: string; icon: Component }[] = [
               :href="item.href"
               :aria-label="item.label"
               class="flex size-8 items-center justify-center rounded-full bg-primary text-white"
+              rel="nofollow noopener"
             >
               <component :is="item.icon" class="size-3.5" />
             </a>
