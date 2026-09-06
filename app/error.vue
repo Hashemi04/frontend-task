@@ -2,6 +2,9 @@
 const error = useError()
 
 const is404 = computed(() => error.value?.statusCode === 404)
+
+// 404 → empty (missing page or product)
+// anything else → error (unexpected failure)
 const title = computed(() =>
   is404.value ? (error.value?.statusMessage || 'صفحه پیدا نشد') : 'خطایی رخ داد',
 )
@@ -27,8 +30,9 @@ useSeoMeta({
 <template>
   <NuxtLayout>
     <div class="mx-auto max-w-[1200px] px-4 py-10 md:px-6">
+      <!-- empty: HTTP 404 (missing route or product). error: any other failure. -->
       <StateMessage
-        status="error"
+        :status="is404 ? 'empty' : 'error'"
         :title="title"
         :description="description"
         action-label="بازگشت به فهرست"

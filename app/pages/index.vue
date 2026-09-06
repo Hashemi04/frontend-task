@@ -24,6 +24,42 @@ const {
 
 const filtersOpen = ref(false)
 
+// Catalog request flags. Mocks resolve immediately; feat/api swaps these
+// for useAsyncData pending / error / refresh.
+const catalogPending = ref(false)
+const catalogError = ref<Error | null>(null)
+
+type CatalogView = 'loading' | 'error' | 'empty' | 'ready'
+
+const catalogView = computed<CatalogView>(() => {
+  if (catalogPending.value) {
+    return 'loading'
+  }
+  if (catalogError.value) {
+    return 'error'
+  }
+  if (!filteredProducts.value.length) {
+    return 'empty'
+  }
+  return 'ready'
+})
+
+const emptyCopy = computed(() =>
+  hasAppliedFilters.value
+    ? {
+        title: 'محصولی پیدا نشد',
+        description: 'محصولی با این فیلتر پیدا نشد.',
+      }
+    : {
+        title: 'محصولی وجود ندارد',
+        description: 'در حال حاضر محصولی در فروشگاه نیست.',
+      },
+)
+
+function retryCatalog() {
+  catalogError.value = null
+}
+
 const appliedCount = computed(
   () => (appliedSort.value ? 1 : 0) + selectedCategories.value.length,
 )
@@ -91,15 +127,32 @@ useHead({
             @clear-category="clearCategory"
           />
         </div>
-        <ProductGrid
-          v-if="filteredProducts.length"
-          :products="filteredProducts"
-        />
+        <!-- loading: catalog request in flight -->
         <StateMessage
-          v-else
+          v-if="catalogView === 'loading'"
+          status="loading"
+          title="در حال بارگذاری"
+          description="در حال دریافت فهرست محصولات."
+        />
+        <!-- error: catalog request failed -->
+        <StateMessage
+          v-else-if="catalogView === 'error'"
+          status="error"
+          title="دریافت محصولات با خطا مواجه شد"
+          description="اتصال را بررسی کنید و دوباره تلاش کنید."
+          @action="retryCatalog"
+        />
+        <!-- empty: request succeeded, nothing to show (no catalog rows, or filters matched none) -->
+        <StateMessage
+          v-else-if="catalogView === 'empty'"
           status="empty"
-          title="محصولی پیدا نشد"
-          description="محصولی با این فیلتر پیدا نشد."
+          :title="emptyCopy.title"
+          :description="emptyCopy.description"
+        />
+        <!-- ready: at least one product after filters -->
+        <ProductGrid
+          v-else
+          :products="filteredProducts"
         />
       </div>
     </div>

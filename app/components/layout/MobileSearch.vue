@@ -143,18 +143,22 @@ function clearDraft() {
       </form>
 
       <div class="min-h-0 flex-1 overflow-y-auto px-4 py-3">
+        <!-- idle: no query yet — not an empty/error state -->
         <p
           v-if="!term"
           class="px-1 py-6 text-center text-sm text-muted"
         >
           نام محصول را بنویسید
         </p>
+        <!-- empty: typed query, no title matches. loading/error are not used here
+             because results are filtered from the in-memory catalog. -->
         <StateMessage
           v-else-if="!results.length"
           status="empty"
           title="محصولی پیدا نشد"
           description="محصولی با این جستجو پیدا نشد."
         />
+        <!-- ready: at least one title match -->
         <ul v-else class="flex flex-col gap-1" aria-label="نتایج جستجو">
           <li v-for="{ product, parts } in results" :key="product.id">
             <NuxtLink

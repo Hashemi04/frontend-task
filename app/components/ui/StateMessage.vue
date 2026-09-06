@@ -1,4 +1,8 @@
 <script setup lang="ts">
+// Shared catalog UI for the three request views:
+// loading — data is in flight
+// error   — request failed; show a retry action
+// empty   — request succeeded but there is nothing to show
 type Status = 'empty' | 'error' | 'loading'
 
 const props = withDefaults(
@@ -11,7 +15,6 @@ const props = withDefaults(
   }>(),
   {
     status: 'empty',
-    actionLabel: 'تلاش دوباره',
   },
 )
 
@@ -26,6 +29,12 @@ const fallbackTitle: Record<Status, string> = {
 }
 
 const heading = computed(() => props.title ?? fallbackTitle[props.status])
+const actionText = computed(() => props.actionLabel ?? 'تلاش دوباره')
+const showAction = computed(
+  () =>
+    props.status === 'error'
+    || (props.status === 'empty' && Boolean(props.actionLabel || props.actionTo)),
+)
 const isLive = computed(() => props.status !== 'error')
 </script>
 
@@ -51,12 +60,12 @@ const isLive = computed(() => props.status !== 'error')
       {{ description }}
     </p>
 
-    <div v-if="status === 'error'" class="mt-5">
+    <div v-if="showAction" class="mt-5">
       <BaseButton v-if="actionTo" :to="actionTo">
-        {{ actionLabel }}
+        {{ actionText }}
       </BaseButton>
       <BaseButton v-else type="button" @click="emit('action')">
-        {{ actionLabel }}
+        {{ actionText }}
       </BaseButton>
     </div>
   </BaseCard>
