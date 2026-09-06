@@ -6,8 +6,9 @@ const props = withDefaults(
     variant?: Variant
     to?: string
     block?: boolean
+    decorative?: boolean
   }>(),
-  { variant: 'solid', block: false },
+  { variant: 'solid', block: false, decorative: false },
 )
 
 const variantClasses: Record<Variant, string> = {
@@ -28,6 +29,9 @@ const classes = computed(() => [
   <NuxtLink v-if="to" :to="to" :class="classes">
     <slot />
   </NuxtLink>
+  <span v-else-if="decorative" :class="classes">
+    <slot />
+  </span>
   <button v-else type="button" :class="classes">
     <slot />
   </button>

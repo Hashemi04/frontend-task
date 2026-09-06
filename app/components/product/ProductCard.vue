@@ -8,34 +8,32 @@ defineProps<{
 </script>
 
 <template>
-  <BaseCard as="article" class="flex flex-col">
-    <img
-      class="block w-full aspect-[4/3] object-contain p-4"
-      :src="product.image"
-      :alt="product.title"
-      :loading="priority ? 'eager' : 'lazy'"
-      :fetchpriority="priority ? 'high' : 'auto'"
-      width="400"
-      height="300"
+  <article>
+    <NuxtLink
+      :to="`/products/${product.id}`"
+      class="flex h-full flex-col overflow-hidden rounded-card bg-surface shadow-card"
     >
-    <div class="flex flex-1 flex-col gap-4 px-4 pb-4">
-      <h2 class="m-0 line-clamp-2 text-start text-[0.95rem] font-semibold leading-relaxed">
-        <NuxtLink :to="`/products/${product.id}`" class="hover:text-primary">
-          {{ product.title }}
-        </NuxtLink>
-      </h2>
-      <BaseButton
-        variant="outline"
-        block
-        class="mt-auto"
-        :to="`/products/${product.id}`"
+      <img
+        class="block w-full aspect-[4/3] object-contain p-4"
+        :src="product.image"
+        :alt="product.title"
+        :loading="priority ? 'eager' : 'lazy'"
+        :fetchpriority="priority ? 'high' : 'auto'"
+        width="400"
+        height="300"
       >
-        مشاهده جزئیات
-        <span
-          aria-hidden="true"
-          class="size-[0.45rem] rotate-45 border-b-2 border-e-2 border-current"
-        />
-      </BaseButton>
-    </div>
-  </BaseCard>
+      <div class="flex flex-1 flex-col gap-4 px-4 pb-4">
+        <h2 class="m-0 line-clamp-2 text-start text-[0.95rem] font-semibold leading-relaxed">
+          {{ product.title }}
+        </h2>
+        <BaseButton variant="outline" block decorative class="mt-auto">
+          مشاهده جزئیات
+          <span
+            aria-hidden="true"
+            class="size-[0.45rem] rotate-45 border-b-2 border-e-2 border-current"
+          />
+        </BaseButton>
+      </div>
+    </NuxtLink>
+  </article>
 </template>
