@@ -1,23 +1,32 @@
 <script setup lang="ts">
-import { mockProducts } from '~/data/mockProducts'
+import { mockProducts } from "~/data/mockProducts";
 
 usePageSeo({
-  title: 'لیست محصولات',
-  description: 'جستجو و مشاهده فهرست محصولات فروشگاه.',
-})
+  title: "لیست محصولات",
+  description: "جستجو و مشاهده فهرست محصولات فروشگاه.",
+});
 
-const url = useRequestURL()
-const { query, sort, filteredProducts, setQuery, setSort } = useProductFilters(mockProducts)
+const url = useRequestURL();
+const {
+  query,
+  sort,
+  appliedSort,
+  hasAppliedFilters,
+  filteredProducts,
+  setQuery,
+  setSort,
+  clearSort,
+} = useProductFilters(mockProducts);
 
 useHead({
   script: [
     {
-      type: 'application/ld+json',
+      type: "application/ld+json",
       innerHTML: JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'ItemList',
+        "@context": "https://schema.org",
+        "@type": "ItemList",
         itemListElement: mockProducts.map((product, index) => ({
-          '@type': 'ListItem',
+          "@type": "ListItem",
           position: index + 1,
           url: `${url.origin}/products/${product.id}`,
           name: product.title,
@@ -25,7 +34,7 @@ useHead({
       }),
     },
   ],
-})
+});
 </script>
 
 <template>
@@ -40,7 +49,14 @@ useHead({
       />
 
       <div class="min-w-0 flex-1">
-        <h1 class="mb-5 text-xl font-bold">لیست محصولات</h1>
+        <AppliedFilters
+          v-if="hasAppliedFilters"
+          :query="query"
+          :sort="appliedSort"
+          @clear-search="setQuery('')"
+          @clear-sort="clearSort"
+        />
+        <h1 v-else class="mb-5 text-xl font-bold">لیست محصولات</h1>
         <ProductGrid
           v-if="filteredProducts.length"
           :products="filteredProducts"

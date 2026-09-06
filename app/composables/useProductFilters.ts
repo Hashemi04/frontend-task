@@ -83,11 +83,27 @@ export function useProductFilters(products: Product[]) {
     patchQuery({ sort: next });
   }
 
+  const appliedSort = computed<SortKey | null>(() => {
+    const value = queryString(route.query.sort);
+    return isSortKey(value) ? value : null;
+  });
+
+  const hasAppliedFilters = computed(
+    () => Boolean(query.value || appliedSort.value),
+  );
+
+  function clearSort() {
+    patchQuery({ sort: undefined });
+  }
+
   return {
     query,
     sort,
+    appliedSort,
+    hasAppliedFilters,
     filteredProducts,
     setQuery,
     setSort,
+    clearSort,
   };
 }
