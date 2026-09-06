@@ -63,8 +63,10 @@ useHead({
       />
 
       <div class="min-w-0 flex-1">
-        <div class="mb-3 flex justify-start lg:hidden">
+        <h1 class="mb-3 text-lg font-bold lg:text-xl">لیست محصولات</h1>
+        <div class="mb-5 flex items-center gap-2">
           <BaseButton
+            class="shrink-0 lg:hidden"
             variant="outline"
             :aria-expanded="filtersOpen"
             aria-controls="mobile-filters"
@@ -79,18 +81,16 @@ useHead({
               {{ appliedCount.toLocaleString('fa-IR') }}
             </span>
           </BaseButton>
+          <AppliedFilters
+            v-if="hasAppliedFilters"
+            :query="query"
+            :sort="appliedSort"
+            :categories="selectedCategories"
+            @clear-search="setQuery('')"
+            @clear-sort="clearSort"
+            @clear-category="clearCategory"
+          />
         </div>
-
-        <AppliedFilters
-          v-if="hasAppliedFilters"
-          :query="query"
-          :sort="appliedSort"
-          :categories="selectedCategories"
-          @clear-search="setQuery('')"
-          @clear-sort="clearSort"
-          @clear-category="clearCategory"
-        />
-        <h1 v-else class="mb-5 text-xl font-bold">لیست محصولات</h1>
         <ProductGrid
           v-if="filteredProducts.length"
           :products="filteredProducts"
