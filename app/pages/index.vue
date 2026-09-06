@@ -31,14 +31,13 @@ useHead({
 <template>
   <div class="mx-auto max-w-[1200px] px-4 pt-5 pb-10 md:px-6 md:pt-7 md:pb-12">
     <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-6">
-      <aside class="flex w-full shrink-0 flex-col gap-4 lg:w-[17.5rem]">
-        <SearchCard
-          :applied="query"
-          @submit="setQuery"
-          @clear="setQuery('')"
-        />
-        <SortCard :selected="sort" @select="setSort" />
-      </aside>
+      <FilterSidebar
+        :query="query"
+        :sort="sort"
+        @search="setQuery"
+        @clear-search="setQuery('')"
+        @sort="setSort"
+      />
 
       <div class="min-w-0 flex-1">
         <h1 class="mb-5 text-xl font-bold">لیست محصولات</h1>
