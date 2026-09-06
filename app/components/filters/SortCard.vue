@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import type { SortKey } from '~/composables/useProductFilters'
 
-const props = defineProps<{
-  selected: SortKey
-}>()
+const props = withDefaults(
+  defineProps<{
+    selected: SortKey
+    name?: string
+  }>(),
+  { name: 'product-sort' },
+)
 
 const emit = defineEmits<{
   select: [value: SortKey]
@@ -60,7 +64,7 @@ const options: { value: SortKey, label: string }[] = [
             v-model="selectedSort"
             class="size-4 shrink-0 cursor-pointer appearance-none rounded-full border-2 border-line bg-surface checked:border-primary checked:bg-primary checked:shadow-[inset_0_0_0_3px_white]"
             type="radio"
-            name="product-sort"
+            :name="name"
             :value="option.value"
           >
           <span

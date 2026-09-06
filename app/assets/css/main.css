@@ -42,3 +42,47 @@ body {
 .drawer-leave-to .drawer-panel {
   transform: translateX(100%);
 }
+
+.sheet-enter-active .sheet-overlay,
+.sheet-leave-active .sheet-overlay {
+  transition: opacity 220ms ease;
+}
+
+.sheet-enter-active .drawer-panel,
+.sheet-leave-active .drawer-panel {
+  transition: transform 220ms ease;
+}
+
+.sheet-enter-from .sheet-overlay,
+.sheet-leave-to .sheet-overlay {
+  opacity: 0;
+}
+
+.sheet-enter-from .drawer-panel,
+.sheet-leave-to .drawer-panel {
+  transform: translateY(100%);
+}
+
+.sheet-snapping {
+  transition: height 200ms ease, border-radius 200ms ease;
+}
+
+.sheet-top-enter-active .sheet-overlay,
+.sheet-top-leave-active .sheet-overlay {
+  transition: opacity 220ms ease;
+}
+
+.sheet-top-enter-active .drawer-panel,
+.sheet-top-leave-active .drawer-panel {
+  transition: transform 220ms ease;
+}
+
+.sheet-top-enter-from .sheet-overlay,
+.sheet-top-leave-to .sheet-overlay {
+  opacity: 0;
+}
+
+.sheet-top-enter-from .drawer-panel,
+.sheet-top-leave-to .drawer-panel {
+  transform: translateY(-100%);
+}
