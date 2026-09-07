@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { navItems, PHONE_HREF } from '~/data/nav';
+import { navItems, PHONE_HREF } from "~/data/nav";
 
 const route = useRoute();
 const menuOpen = ref(false);
 const searchOpen = ref(false);
+
+const mobileIconButton =
+  "inline-flex size-10 items-center justify-center rounded-xl border border-primary bg-surface text-primary";
 
 watch(
   () => route.fullPath,
@@ -23,13 +26,13 @@ watch(
     >
       <button
         type="button"
-        class="inline-flex size-10 items-center justify-center rounded-full text-ink md:hidden"
+        :class="[mobileIconButton, 'md:hidden']"
         :aria-expanded="menuOpen"
         aria-controls="mobile-nav"
         aria-label="منو"
         @click="menuOpen = true"
       >
-        <IconMenu class="size-6" />
+        <IconMenu class="size-5" />
       </button>
 
       <nav
@@ -48,7 +51,7 @@ watch(
       <div class="flex items-center gap-1">
         <button
           type="button"
-          class="inline-flex size-10 items-center justify-center rounded-full text-ink lg:hidden"
+          class="inline-flex size-10 items-center justify-center rounded-full text-primary lg:hidden"
           :aria-expanded="searchOpen"
           aria-controls="mobile-product-search"
           aria-label="جستجو"
@@ -56,10 +59,19 @@ watch(
         >
           <IconSearch class="size-5" />
         </button>
-        <BaseButton :to="PHONE_HREF">
-          تماس
-          <IconPhone class="size-4" />
-        </BaseButton>
+        <NuxtLink
+          :to="PHONE_HREF"
+          :class="[mobileIconButton, 'md:hidden']"
+          aria-label="تماس"
+        >
+          <IconPhone class="size-5" />
+        </NuxtLink>
+        <span class="hidden md:inline-flex">
+          <BaseButton :to="PHONE_HREF">
+            تماس
+            <IconPhone class="size-4" />
+          </BaseButton>
+        </span>
       </div>
     </div>
 
