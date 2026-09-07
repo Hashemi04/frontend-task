@@ -36,7 +36,7 @@ function clear() {
       فیلتر و جستجو
     </h2>
 
-    <form @submit.prevent="onSubmit">
+    <form class="flex flex-col gap-4" @submit.prevent="onSubmit">
       <label class="sr-only" for="product-search">جستجوی محصول</label>
       <div
         class="flex h-10 items-center rounded-xl border-2 bg-page transition-colors"
@@ -78,8 +78,8 @@ function clear() {
           <IconClose class="size-3.5" />
         </button>
       </div>
-    </form>
 
-    <BaseButton radius="xl" block> جستجو </BaseButton>
+      <BaseButton type="submit" radius="xl" block> جستجو </BaseButton>
+    </form>
   </BaseCard>
 </template>
