@@ -31,6 +31,7 @@ pnpm test
 | `/` | Catalog: search, sort, categories, pagination |
 | `/products/:id` | Detail: image, price, category, rating, description |
 | `/consultation`, `/faq`, `/contact` | Real routes, placeholder copy |
+| `/about`, `/blog`, `/after-sales`, `/terms`, `/feedback` | Footer placeholders, same pattern as FAQ |
 | anything else / unknown product id | `error.vue` — 404 as empty, other failures as error |
 
 Unknown or non-integer `id` throws `createError({ statusCode: 404, fatal: true })`. «بازگشت به فهرست» on that screen uses `clearError({ redirect: '/' })`.

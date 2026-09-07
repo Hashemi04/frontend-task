@@ -10,16 +10,16 @@ import IconLinkedin from "~/components/icons/IconLinkedin.vue";
 import IconTelegram from "~/components/icons/IconTelegram.vue";
 
 const quickLinks = [
-  { to: "/contact", label: "درباره ما" },
-  { to: "/contact", label: "بلاگ" },
+  { to: "/about", label: "درباره ما" },
+  { to: "/blog", label: "بلاگ" },
   { to: "/contact", label: "تماس با ما" },
-  { to: "/contact", label: "خدمات پس از فروش" },
+  { to: "/after-sales", label: "خدمات پس از فروش" },
 ];
 
 const guideLinks = [
-  { to: "/faq", label: "قوانین و مقررات" },
+  { to: "/terms", label: "قوانین و مقررات" },
   { to: "/consultation", label: "دریافت مشاوره" },
-  { to: "/contact", label: "انتقادات و پیشنهادات" },
+  { to: "/feedback", label: "انتقادات و پیشنهادات" },
 ];
 
 const socialLinks = [

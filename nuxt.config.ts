@@ -41,6 +41,11 @@ export default defineNuxtConfig({
       '/consultation': { swr: 120 },
       '/faq': { swr: 120 },
       '/contact': { swr: 120 },
+      '/about': { swr: 120 },
+      '/blog': { swr: 120 },
+      '/after-sales': { swr: 120 },
+      '/terms': { swr: 120 },
+      '/feedback': { swr: 120 },
       '/_nuxt/**': {
         headers: {
           'cache-control': 'public, max-age=31536000, immutable',
