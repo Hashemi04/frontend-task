@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SortKey } from "~/composables/useProductFilters";
+import type { SortKey } from "~/utils/productQuery";
 
 const props = withDefaults(
   defineProps<{

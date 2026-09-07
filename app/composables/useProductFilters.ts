@@ -13,8 +13,6 @@ import {
   queryString,
 } from '~/utils/productQuery'
 
-export type { SortKey } from '~/utils/productQuery'
-
 export function useProductFilters(
   products: MaybeRefOrGetter<Product[]>,
   allCategories: MaybeRefOrGetter<string[]>,
