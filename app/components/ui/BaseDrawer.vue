@@ -19,6 +19,13 @@ function close() {
 
 useHistoryClose(() => props.open, close);
 
+const panelRef = ref<HTMLElement | null>(null);
+
+useFocusTrap(
+  () => props.open,
+  () => panelRef.value,
+);
+
 watch(
   () => props.open,
   (isOpen) => {
@@ -93,16 +100,19 @@ const panelClass = computed(() => {
       <div v-if="open" class="fixed inset-0 z-40">
         <button
           type="button"
+          tabindex="-1"
           class="sheet-overlay absolute inset-0 bg-ink/40"
           aria-label="بستن"
           @click="close"
         />
         <aside
+          ref="panelRef"
           role="dialog"
           aria-modal="true"
+          tabindex="-1"
           :aria-label="title"
           :aria-expanded="canExpand ? expanded : undefined"
-          :class="panelClass"
+          :class="[panelClass, 'outline-none']"
           :style="panelStyle"
           @pointerdown="onPointerDown"
         >
