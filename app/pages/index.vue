@@ -126,11 +126,34 @@ useHead({
 
       <div class="min-w-0 flex-1">
         <div
-          class="sticky top-14 z-20 mb-5 flex items-center gap-2 bg-page py-3 md:top-18"
+          class="sticky top-14 z-20 mb-4 flex items-stretch gap-2 bg-page py-2 md:top-18 md:mb-5 md:py-3"
         >
+          <div
+            class="flex min-h-11 min-w-0 flex-1 items-center justify-between gap-3 rounded-2xl bg-surface px-4 py-2.5 shadow-card lg:min-h-0 lg:rounded-3xl lg:p-6"
+          >
+            <h1 class="shrink-0 text-sm font-medium leading-4 text-heading">
+              <span :class="hasAppliedFilters ? 'lg:hidden' : undefined">
+                لیست محصولات
+              </span>
+              <span v-if="hasAppliedFilters" class="hidden lg:inline">
+                فیلترهای اعمال شده
+              </span>
+            </h1>
+            <AppliedFilters
+              v-if="hasAppliedFilters"
+              class="max-lg:hidden"
+              :query="query"
+              :sort="appliedSort"
+              :categories="selectedCategories"
+              @clear-search="setQuery('')"
+              @clear-sort="clearSort"
+              @clear-category="clearCategory"
+            />
+          </div>
           <BaseButton
-            class="shrink-0 lg:hidden"
+            class="min-h-11 shrink-0 lg:hidden"
             variant="outline"
+            radius="2xl"
             :aria-expanded="filtersOpen"
             aria-controls="mobile-filters"
             @click="filtersOpen = true"
@@ -144,24 +167,6 @@ useHead({
               {{ formatCount(appliedCount) }}
             </span>
           </BaseButton>
-          <div
-            class="flex min-w-0 flex-1 items-center justify-between rounded-3xl bg-surface p-6 shadow-card"
-          >
-            <h1
-              class="shrink-0 text-right text-sm font-medium leading-4 text-heading"
-            >
-              {{ hasAppliedFilters ? "فیلترهای اعمال شده" : "لیست محصولات" }}
-            </h1>
-            <AppliedFilters
-              v-if="hasAppliedFilters"
-              :query="query"
-              :sort="appliedSort"
-              :categories="selectedCategories"
-              @clear-search="setQuery('')"
-              @clear-sort="clearSort"
-              @clear-category="clearCategory"
-            />
-          </div>
         </div>
         <div class="overflow-hidden">
           <!-- loading: catalog request in flight -->
