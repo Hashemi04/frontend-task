@@ -21,23 +21,25 @@ watch(
 const isActive = computed(() => focused.value || Boolean(draft.value.trim()));
 
 function onSubmit() {
-  emit("submit", draft.value);
+  emit('submit', draft.value);
 }
 
 function clear() {
-  draft.value = "";
-  emit("clear");
+  draft.value = '';
+  emit('clear');
 }
 </script>
 
 <template>
-  <BaseCard as="section" class="p-4 md:p-5">
-    <h2 class="mb-4 text-base font-bold">فیلتر و جستجو</h2>
+  <BaseCard as="section" class="flex flex-col gap-4 p-4 md:p-5">
+    <h2 class="mb-4 text-[13px] font-medium text-section-title">
+      فیلتر و جستجو
+    </h2>
 
     <form @submit.prevent="onSubmit">
       <label class="sr-only" for="product-search">جستجوی محصول</label>
       <div
-        class="flex h-12 items-center rounded-full border-2 bg-page transition-colors"
+        class="flex h-10 items-center rounded-xl border-2 bg-page transition-colors"
         :class="isActive ? 'border-primary' : 'border-line'"
         @focusin="focused = true"
         @focusout="focused = false"
@@ -77,5 +79,7 @@ function clear() {
         </button>
       </div>
     </form>
+
+    <BaseButton radius="xl" block> جستجو </BaseButton>
   </BaseCard>
 </template>

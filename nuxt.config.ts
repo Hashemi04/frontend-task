@@ -1,4 +1,4 @@
-import tailwindcss from '@tailwindcss/vite'
+import tailwindcss from '@tailwindcss/vite';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -25,14 +25,7 @@ export default defineNuxtConfig({
           content: 'فهرست و جزئیات محصولات از فروشگاه آزمایشی Fake Store.',
         },
       ],
-      link: [
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous' },
-        {
-          rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap',
-        },
-      ],
+      link: [{ rel: 'preconnect', href: 'https://cdn.jsdelivr.net' }],
     },
   },
-})
+});

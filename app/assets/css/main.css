@@ -3,7 +3,7 @@
 /* Values are eyeballed from the Figma screenshots and should be replaced
    with the exact tokens once sampled in Figma. */
 @theme {
-  --font-sans: 'Vazirmatn', sans-serif;
+  --font-sans: 'Yekan Bakh', sans-serif;
 
   --color-primary: #e91e63;
   --color-primary-soft: #fce4ec;
@@ -12,8 +12,9 @@
   --color-ink: #0a2a51;
   --color-muted: #64748b;
   --color-line: #e2e8f0;
+  --color-section-title: #445a74;
 
-  --radius-card: 16px;
+  --radius-card: 24px;
   --shadow-card: 0 8px 24px rgb(15 23 42 / 6%);
   --max-height-hero: 28rem;
 }
@@ -22,6 +23,38 @@ body {
   background: var(--color-page);
   color: var(--color-ink);
   font-family: var(--font-sans);
+}
+
+@font-face {
+  font-family: 'Yekan Bakh';
+  src: url('https://cdn.jsdelivr.net/gh/AmirAbbasVafaee/persian-fonts-cdn@main/fonts/yekan-bakh/YekanBakhFaNum-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Yekan Bakh';
+  src: url('https://cdn.jsdelivr.net/gh/AmirAbbasVafaee/persian-fonts-cdn@main/fonts/yekan-bakh/YekanBakhFaNum-Regular.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Yekan Bakh';
+  src: url('https://cdn.jsdelivr.net/gh/AmirAbbasVafaee/persian-fonts-cdn@main/fonts/yekan-bakh/YekanBakhFaNum-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Yekan Bakh';
+  src: url('https://cdn.jsdelivr.net/gh/AmirAbbasVafaee/persian-fonts-cdn@main/fonts/yekan-bakh/YekanBakhFaNum-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
 }
 
 .drawer-enter-active,
