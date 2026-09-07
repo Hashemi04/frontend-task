@@ -4,12 +4,14 @@ import type { SortKey } from "~/utils/productQuery";
 defineProps<{
   query: string;
   sort: SortKey | null;
+  available: boolean;
   categories: string[];
 }>();
 
 const emit = defineEmits<{
   clearSearch: [];
   clearSort: [];
+  clearAvailable: [];
   clearCategory: [category: string];
 }>();
 
@@ -32,6 +34,17 @@ function sortLabel(sort: SortKey) {
       >
         <IconSearch class="size-3.5 shrink-0" />
         <span class="max-w-28 truncate">{{ query }}</span>
+        <IconClose class="size-3 shrink-0" />
+      </button>
+    </li>
+    <li v-if="available" class="shrink-0">
+      <button
+        type="button"
+        class="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-primary-soft py-1 pe-2.5 ps-2 text-xs text-ink"
+        aria-label="حذف فیلتر محصولات موجود"
+        @click="emit('clearAvailable')"
+      >
+        <span>محصولات موجود</span>
         <IconClose class="size-3 shrink-0" />
       </button>
     </li>

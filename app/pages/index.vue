@@ -26,6 +26,7 @@ const {
   query,
   sort,
   appliedSort,
+  available,
   selectedCategories,
   categoryCounts,
   hasAppliedFilters,
@@ -36,7 +37,9 @@ const {
   setQuery,
   setSort,
   setPage,
+  setAvailable,
   clearSort,
+  clearAvailable,
   toggleCategory,
   clearCategory,
 } = useProductFilters(catalog, allCategories);
@@ -88,7 +91,10 @@ function goToPage(next: number) {
 }
 
 const appliedCount = computed(
-  () => (appliedSort.value ? 1 : 0) + selectedCategories.value.length,
+  () =>
+    (appliedSort.value ? 1 : 0) +
+    selectedCategories.value.length +
+    (available.value ? 1 : 0),
 );
 
 useHead(() => ({
@@ -119,11 +125,13 @@ useHead(() => ({
         class="app-scroll max-lg:hidden lg:sticky lg:top-22 lg:w-[17.5rem] lg:shrink-0 lg:max-h-[calc(100dvh-6.5rem)] lg:overflow-y-auto"
         :query="query"
         :sort="sort"
+        :available="available"
         :selected-categories="selectedCategories"
         :category-counts="categoryCounts"
         @search="setQuery"
         @clear-search="setQuery('')"
         @sort="setSort"
+        @available="setAvailable"
         @toggle-category="toggleCategory"
       />
 
@@ -148,9 +156,11 @@ useHead(() => ({
               class="max-lg:hidden"
               :query="query"
               :sort="appliedSort"
+              :available="available"
               :categories="selectedCategories"
               @clear-search="setQuery('')"
               @clear-sort="clearSort"
+              @clear-available="clearAvailable"
               @clear-category="clearCategory"
             />
           </div>
@@ -242,11 +252,13 @@ useHead(() => ({
               :show-search="false"
               :query="query"
               :sort="sort"
+              :available="available"
               :selected-categories="selectedCategories"
               :category-counts="categoryCounts"
               @search="setQuery"
               @clear-search="setQuery('')"
               @sort="setSort"
+              @available="setAvailable"
               @toggle-category="toggleCategory"
             />
           </div>

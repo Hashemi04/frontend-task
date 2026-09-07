@@ -1,24 +1,26 @@
 <script setup lang="ts">
-import type { SortKey } from '~/utils/productQuery'
+import type { SortKey } from "~/utils/productQuery";
 
 withDefaults(
   defineProps<{
-    query: string
-    sort: SortKey
-    selectedCategories: string[]
-    categoryCounts: { category: string, count: number }[]
-    sortName?: string
-    showSearch?: boolean
+    query: string;
+    sort: SortKey;
+    selectedCategories: string[];
+    categoryCounts: { category: string; count: number }[];
+    available: boolean;
+    sortName?: string;
+    showSearch?: boolean;
   }>(),
   { showSearch: true },
-)
+);
 
 const emit = defineEmits<{
-  search: [value: string]
-  clearSearch: []
-  sort: [value: SortKey]
-  toggleCategory: [category: string]
-}>()
+  search: [value: string];
+  clearSearch: [];
+  sort: [value: SortKey];
+  toggleCategory: [category: string];
+  available: [value: boolean];
+}>();
 </script>
 
 <template>
@@ -28,6 +30,10 @@ const emit = defineEmits<{
       :applied="query"
       @submit="emit('search', $event)"
       @clear="emit('clearSearch')"
+    />
+    <AvailabilityToggle
+      :on="available"
+      @toggle="emit('available', $event)"
     />
     <SortCard
       :selected="sort"

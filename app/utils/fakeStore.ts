@@ -67,6 +67,14 @@ export function parseProductList(value: unknown): Product[] {
   return products
 }
 
+/**
+ * Fake Store has no stock / availability field. Odd ids stay in stock so
+ * the «محصولات موجود» filter can hide a stable subset of the catalog.
+ */
+export function isProductAvailable(product: Product): boolean {
+  return product.id % 2 !== 0
+}
+
 export function catalogCategories(products: Product[]): Category[] {
   const present = new Set(products.map(product => product.category))
   const known = CATALOG_CATEGORIES.filter(category => present.has(category))

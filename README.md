@@ -38,7 +38,7 @@ Unknown or non-integer `id` throws `createError({ statusCode: 404, fatal: true }
 
 ## Data
 
-Catalog: `GET https://fakestoreapi.com/products`. Detail: `GET https://fakestoreapi.com/products/:id`. Both go through `useAsyncData` (`products`, `product-${id}`) and `$fetch`. Filters still run on the client after the list fetch. Retry calls `refresh()`.
+Catalog: `GET https://fakestoreapi.com/products`. Detail: `GET https://fakestoreapi.com/products/:id`. Both go through `useAsyncData` (`products`, `product-${id}`) and `$fetch`. Filters still run on the client after the list fetch. Retry calls `refresh()`. Fake Store has no stock field; `available=1` keeps odd product ids as a stand-in for «محصولات موجود».
 
 A missing or garbage id is `createError({ statusCode: 404, fatal: true })`. Network / 5xx stays on the page (`status="error"` + retry), not a 404.
 

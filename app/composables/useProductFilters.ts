@@ -2,11 +2,13 @@ import type { MaybeRefOrGetter } from 'vue'
 import { toValue } from 'vue'
 import type { Product } from '~/types/product'
 import type { SortKey } from '~/utils/productQuery'
+import { isProductAvailable } from '~/utils/fakeStore'
 import {
   PAGE_SIZE,
   clampPage,
   compareProducts,
   parseAppliedSort,
+  parseAvailable,
   parseCategories,
   parsePage,
   parseSort,
@@ -39,10 +41,18 @@ export function useProductFilters(
     })),
   )
 
+  const available = computed(() => parseAvailable(route.query.available))
+
   const appliedSort = computed(() => parseAppliedSort(route.query.sort))
 
   const hasAppliedFilters = computed(
-    () => Boolean(query.value || appliedSort.value || selectedCategories.value.length),
+    () =>
+      Boolean(
+        query.value ||
+          appliedSort.value ||
+          selectedCategories.value.length ||
+          available.value,
+      ),
   )
 
   const filteredProducts = computed(() => {
@@ -56,6 +66,10 @@ export function useProductFilters(
     if (selectedCategories.value.length) {
       const selected = new Set(selectedCategories.value)
       list = list.filter(product => selected.has(product.category))
+    }
+
+    if (available.value) {
+      list = list.filter(isProductAvailable)
     }
 
     return [...list].sort((a, b) => compareProducts(a, b, sort.value))
@@ -99,6 +113,14 @@ export function useProductFilters(
     setCategories(selectedCategories.value.filter(item => item !== category))
   }
 
+  function setAvailable(next: boolean) {
+    patchQuery({ available: next ? '1' : undefined })
+  }
+
+  function clearAvailable() {
+    setAvailable(false)
+  }
+
   function clearSort() {
     patchQuery({ sort: undefined })
   }
@@ -118,6 +140,7 @@ export function useProductFilters(
     query,
     sort,
     appliedSort,
+    available,
     selectedCategories,
     categoryCounts,
     hasAppliedFilters,
@@ -128,7 +151,9 @@ export function useProductFilters(
     setQuery,
     setSort,
     setPage,
+    setAvailable,
     clearSort,
+    clearAvailable,
     toggleCategory,
     clearCategory,
   }

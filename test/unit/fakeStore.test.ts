@@ -3,6 +3,7 @@ import {
   CATALOG_CATEGORIES,
   catalogCategories,
   isProduct,
+  isProductAvailable,
   parseProduct,
   parseProductId,
   parseProductList,
@@ -62,6 +63,13 @@ describe("parseProductList", () => {
 
   it("throws when every row is garbage", () => {
     expect(() => parseProductList([{}, { foo: 1 }])).toThrow();
+  });
+});
+
+describe("isProductAvailable", () => {
+  it("treats odd ids as in stock (Fake Store has no inventory field)", () => {
+    expect(isProductAvailable(valid)).toBe(true);
+    expect(isProductAvailable({ ...valid, id: 2 })).toBe(false);
   });
 });
 

@@ -57,6 +57,10 @@ export function clampPage(requested: number, totalPages: number) {
   return Math.min(requested, Math.max(1, totalPages))
 }
 
+export function parseAvailable(value: unknown) {
+  return queryString(value) === "1";
+}
+
 export function parseCategories(value: unknown, allowed: string[]) {
   const raw = queryString(value)
   if (!raw) {

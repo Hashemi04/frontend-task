@@ -6,6 +6,7 @@ import {
   catalogQuerySource,
   clampPage,
   parseAppliedSort,
+  parseAvailable,
   parseCategories,
   parsePage,
   parseSort,
@@ -63,6 +64,15 @@ describe("parsePage", () => {
 describe("clampPage", () => {
   it("caps a requested page to the last page", () => {
     expect(clampPage(99, 3)).toBe(3);
+  });
+});
+
+describe("parseAvailable", () => {
+  it("is off unless the URL is available=1", () => {
+    expect(parseAvailable(undefined)).toBe(false);
+    expect(parseAvailable("")).toBe(false);
+    expect(parseAvailable("true")).toBe(false);
+    expect(parseAvailable("1")).toBe(true);
   });
 });
 
