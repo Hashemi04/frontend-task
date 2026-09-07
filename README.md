@@ -37,9 +37,11 @@ Unknown or non-integer `id` throws `createError({ statusCode: 404, fatal: true }
 
 ## Data
 
-Catalog and detail currently read **in-memory mocks** in `app/data/mockProducts.ts` (20 Fake Store–shaped products, ids 1–20). Images still load from `fakestoreapi.com`.
+Catalog: `GET https://fakestoreapi.com/products`. Detail: `GET https://fakestoreapi.com/products/:id`. Both go through `useAsyncData` (`products`, `product-${id}`) and `$fetch`. Filters still run on the client after the list fetch. Retry calls `refresh()`.
 
-`catalogPending` / `productPending` and the matching error refs are stubs for a later `$fetch` / `useAsyncData` swap. Loading skeletons and in-page error UI are wired; they do not run against the network yet. A missing id is a 404. A failed list/detail request is meant to stay on the page (retry), not become a 404 — that split is ready, the HTTP layer is not.
+A missing or garbage id is `createError({ statusCode: 404, fatal: true })`. Network / 5xx stays on the page (`status="error"` + retry), not a 404.
+
+Price on detail: `fa-IR` digits + `دلار` (`app/utils/format.ts`).
 
 ## Query params
 
@@ -92,6 +94,14 @@ The title / applied-filters pill stays under the header while the grid scrolls, 
 
 Mobile: prev / next and «صفحه ۱ از ۳». Tablet and desktop: numbered pills, current page in primary.
 
+### Detail specs: label and value in one box
+
+The product mock paints each spec as **two** gray chips (label tile, then value tile). On a phone that is a stack of ten surfaces. The pair «قیمت» / amount stops feeling like one fact, and you scroll more for the same five fields.
+
+Detail keeps **one** rounded row per field: label on the start edge, value on the end. You read it as a key–value, the way a spec sheet works, without a second box competing for the same line. Description stays in that same tile — label above, body below — because a Fake Store paragraph cannot sit on one line next to «توضیحات» without colliding with the label.
+
+The mock’s تومان figures and Persian dummy names stay on the artboard. The row still shows API English categories and `formatPrice` + دلار.
+
 ## What is invented (not in the desktop mock)
 
 The assignment’s desktop frame does not specify these; they are implemented so the storefront works as a product:
@@ -99,17 +109,16 @@ The assignment’s desktop frame does not specify these; they are implemented so
 - Mobile/tablet filter sheet and header search overlay
 - Applied-filter chips and clear actions
 - Pagination
-- Loading skeletons (idle until the API is wired)
+- Loading skeletons and in-page error + retry (wired to Fake Store)
 - 404 vs in-page error
 - Extra nav pages as placeholders
 - Page enter from the top; list page keeps the grid animation only so filters do not slide
 
 ## Gaps (honest)
 
-- **No live Fake Store fetch.** Mocks only. Loading/error branches are idle.
 - **Consult / FAQ / contact** are placeholders, not full pages.
 - Product cards do not show price (detail does).
-- JSON-LD `ItemList` currently lists the full mock catalog, not the filtered page.
+- JSON-LD `ItemList` lists the full fetched catalog, not the filtered page.
 
 ## Stack
 

@@ -73,7 +73,7 @@ useHead(() => ({
 </script>
 
 <template>
-  <div class="mx-auto max-w-[1200px] px-4 pt-5 pb-10 md:px-6 md:pt-7 md:pb-12">
+  <div class="mx-auto max-w-[1200px] px-4 pt-4 pb-10 md:px-6 md:pt-7 md:pb-12">
     <!-- loading: product request in flight -->
     <StateMessage
       v-if="productPending"
@@ -92,9 +92,13 @@ useHead(() => ({
     <!-- ready: product payload is on the page -->
     <template v-else-if="product">
       <AppBreadcrumb
-        :items="[{ to: '/', label: 'لیست محصولات' }, { label: product.title }]"
+        :items="[
+          { to: '/', icon: 'home' },
+          { to: '/', label: 'لیست محصولات' },
+          { label: product.title },
+        ]"
       />
-      <div class="flex flex-col gap-4 lg:gap-5">
+      <div class="flex flex-col gap-5">
         <ProductHero :product="product" />
         <ProductSpecs :product="product" />
       </div>
