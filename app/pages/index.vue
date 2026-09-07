@@ -91,7 +91,7 @@ useHead({
   <div class="mx-auto max-w-[1200px] px-4 pt-5 pb-10 md:px-6 md:pt-7 md:pb-12">
     <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-6">
       <FilterSidebar
-        class="max-lg:hidden lg:w-[17.5rem] lg:shrink-0"
+        class="app-scroll max-lg:hidden lg:sticky lg:top-32 lg:w-[17.5rem] lg:shrink-0 lg:max-h-[calc(100dvh-9rem)] lg:overflow-y-auto"
         :query="query"
         :sort="sort"
         :selected-categories="selectedCategories"
