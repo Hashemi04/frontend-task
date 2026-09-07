@@ -19,7 +19,7 @@ watch(
     class="sticky top-0 z-30 bg-surface shadow-[0_1px_0_rgb(10_42_81_/6%)] rounded-b-4xl"
   >
     <div
-      class="relative mx-auto flex h-16 max-w-[1440px] items-center justify-between gap-4 px-4 md:h-30 md:justify-end md:px-10 lg:px-16"
+      class="relative mx-auto flex h-14 max-w-[1440px] items-center justify-between gap-4 px-4 md:h-18 md:justify-end md:px-10 lg:px-16"
     >
       <button
         type="button"
