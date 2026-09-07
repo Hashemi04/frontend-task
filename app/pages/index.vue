@@ -143,12 +143,7 @@ useHead({
         </div>
         <div class="overflow-hidden">
           <!-- loading: catalog request in flight -->
-          <StateMessage
-            v-if="catalogView === 'loading'"
-            status="loading"
-            title="در حال بارگذاری"
-            description="در حال دریافت فهرست محصولات."
-          />
+          <ProductGrid v-if="catalogView === 'loading'" loading />
           <!-- error: catalog request failed -->
           <StateMessage
             v-else-if="catalogView === 'error'"
