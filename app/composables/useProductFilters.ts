@@ -1,3 +1,5 @@
+import type { MaybeRefOrGetter } from 'vue'
+import { toValue } from 'vue'
 import type { Product } from '~/types/product'
 import type { SortKey } from '~/utils/productQuery'
 import {
@@ -13,7 +15,10 @@ import {
 
 export type { SortKey } from '~/utils/productQuery'
 
-export function useProductFilters(products: Product[], allCategories: string[]) {
+export function useProductFilters(
+  products: MaybeRefOrGetter<Product[]>,
+  allCategories: MaybeRefOrGetter<string[]>,
+) {
   const route = useRoute()
   const { patchQuery, setQuery } = useCatalogQuery()
 
@@ -21,14 +26,18 @@ export function useProductFilters(products: Product[], allCategories: string[]) 
 
   const sort = computed(() => parseSort(route.query.sort))
 
+  const catalog = computed(() => toValue(products))
+  const categories = computed(() => toValue(allCategories))
+
   const selectedCategories = computed(() =>
-    parseCategories(route.query.categories, allCategories),
+    parseCategories(route.query.categories, categories.value),
   )
 
   const categoryCounts = computed(() =>
-    allCategories.map(category => ({
+    categories.value.map(category => ({
       category,
-      count: products.filter(product => product.category === category).length,
+      count: catalog.value.filter(product => product.category === category)
+        .length,
     })),
   )
 
@@ -40,7 +49,7 @@ export function useProductFilters(products: Product[], allCategories: string[]) 
 
   const filteredProducts = computed(() => {
     const term = query.value.toLowerCase()
-    let list = products
+    let list = catalog.value
 
     if (term) {
       list = list.filter(product => product.title.toLowerCase().includes(term))

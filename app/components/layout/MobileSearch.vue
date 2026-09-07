@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { mockProducts } from "~/data/mockProducts";
 import type { Product } from "~/types/product";
 import { queryString } from "~/utils/productQuery";
 
@@ -13,10 +12,12 @@ const emit = defineEmits<{
 
 const route = useRoute();
 const { setQuery } = useCatalogQuery();
+const { data: catalogData } = await useCatalogProducts();
 const inputRef = ref<HTMLInputElement | null>(null);
 const draft = ref("");
 
 const term = computed(() => draft.value.trim());
+const catalog = computed(() => catalogData.value ?? []);
 
 type TitlePart = { text: string; match: boolean };
 
@@ -44,7 +45,7 @@ const results = computed(() => {
   }
 
   const needle = term.value.toLowerCase();
-  return mockProducts
+  return catalog.value
     .filter((product) => product.title.toLowerCase().includes(needle))
     .map((product) => ({
       product,
@@ -134,8 +135,8 @@ function clearDraft() {
         <p v-if="!term" class="px-1 py-6 text-center text-sm text-muted">
           نام محصول را بنویسید
         </p>
-        <!-- empty: typed query, no title matches. loading/error are not used here
-             because results are filtered from the in-memory catalog. -->
+        <!-- empty: typed query, no title matches. local filter over the fetched
+             catalog — not a second Fake Store request. -->
         <StateMessage
           v-else-if="!results.length"
           status="empty"

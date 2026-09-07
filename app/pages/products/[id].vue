@@ -1,76 +1,75 @@
 <script setup lang="ts">
-import { mockProducts } from "~/data/mockProducts";
+import { parseProductId } from "~/utils/fakeStore";
 
 const route = useRoute();
 const rawId = Array.isArray(route.params.id)
   ? route.params.id[0]
   : route.params.id;
-const id = typeof rawId === "string" ? Number(rawId) : Number.NaN;
-const product = mockProducts.find((item) => item.id === id);
+const id = parseProductId(rawId);
 
-// Product request flags. Mocks resolve immediately; feat/api swaps these
-// for useAsyncData pending / error / refresh.
-const productPending = ref(false);
-const productError = ref<Error | null>(null);
+const notFound = {
+  statusCode: 404,
+  statusMessage: "محصول پیدا نشد",
+  message: "این محصول در فروشگاه وجود ندارد.",
+  fatal: true,
+} as const;
 
-function retryProduct() {
-  productError.value = null;
+if (id == null) {
+  throw createError(notFound);
 }
 
-const isMissingProduct =
-  !product || !Number.isInteger(id) || String(id) !== rawId;
+const {
+  data: product,
+  pending: productPending,
+  error: productError,
+  refresh: retryProduct,
+} = await useProductById(id);
 
-// not-found: id is invalid or not in the catalog → HTTP 404 (error.vue empty)
-if (!productPending.value && !productError.value && isMissingProduct) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: "محصول پیدا نشد",
-    message: "این محصول در فروشگاه وجود ندارد.",
-    fatal: true,
-  });
+if (!productPending.value && !productError.value && !product.value) {
+  throw createError(notFound);
 }
 
 const url = useRequestURL();
 
 usePageSeo({
-  title: product?.title ?? "محصول",
-  description: (product?.description ?? "").slice(0, 160),
+  title: product.value?.title ?? "محصول",
+  description: (product.value?.description ?? "").slice(0, 160),
 });
 
 useSeoMeta({
-  ogImage: product?.image,
+  ogImage: product.value?.image,
 });
 
-useHead({
-  script: product
+useHead(() => ({
+  script: product.value
     ? [
         {
           type: "application/ld+json",
           textContent: {
             "@context": "https://schema.org",
             "@type": "Product",
-            name: product.title,
-            image: product.image,
-            description: product.description,
-            sku: String(product.id),
-            category: product.category,
+            name: product.value.title,
+            image: product.value.image,
+            description: product.value.description,
+            sku: String(product.value.id),
+            category: product.value.category,
             offers: {
               "@type": "Offer",
-              price: product.price,
+              price: product.value.price,
               priceCurrency: "USD",
               availability: "https://schema.org/InStock",
-              url: `${url.origin}/products/${product.id}`,
+              url: `${url.origin}/products/${product.value.id}`,
             },
             aggregateRating: {
               "@type": "AggregateRating",
-              ratingValue: product.rating.rate,
-              reviewCount: product.rating.count,
+              ratingValue: product.value.rating.rate,
+              reviewCount: product.value.rating.count,
             },
           },
         },
       ]
     : [],
-});
+}));
 </script>
 
 <template>

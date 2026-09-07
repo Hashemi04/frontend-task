@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { mockCategories, mockProducts } from "~/data/mockProducts";
 import { formatCount } from "~/utils/format";
+import { catalogCategories } from "~/utils/fakeStore";
 
 definePageMeta({
   pageTransition: false,
@@ -12,6 +12,16 @@ usePageSeo({
 });
 
 const url = useRequestURL();
+const {
+  data: catalogData,
+  pending: catalogPending,
+  error: catalogError,
+  refresh: retryCatalog,
+} = await useCatalogProducts();
+
+const catalog = computed(() => catalogData.value ?? []);
+const allCategories = computed(() => catalogCategories(catalog.value));
+
 const {
   query,
   sort,
@@ -29,14 +39,9 @@ const {
   clearSort,
   toggleCategory,
   clearCategory,
-} = useProductFilters(mockProducts, mockCategories);
+} = useProductFilters(catalog, allCategories);
 
 const filtersOpen = ref(false);
-
-// Catalog request flags. Mocks resolve immediately; feat/api swaps these
-// for useAsyncData pending / error / refresh.
-const catalogPending = ref(false);
-const catalogError = ref<Error | null>(null);
 
 type CatalogView = "loading" | "error" | "empty" | "ready";
 
@@ -65,10 +70,6 @@ const emptyCopy = computed(() =>
       },
 );
 
-function retryCatalog() {
-  catalogError.value = null;
-}
-
 function goToPage(next: number) {
   if (next === page.value) {
     return;
@@ -90,23 +91,25 @@ const appliedCount = computed(
   () => (appliedSort.value ? 1 : 0) + selectedCategories.value.length,
 );
 
-useHead({
-  script: [
-    {
-      type: "application/ld+json",
-      textContent: {
-        "@context": "https://schema.org",
-        "@type": "ItemList",
-        itemListElement: mockProducts.map((product, index) => ({
-          "@type": "ListItem",
-          position: index + 1,
-          url: `${url.origin}/products/${product.id}`,
-          name: product.title,
-        })),
-      },
-    },
-  ],
-});
+useHead(() => ({
+  script: catalog.value.length
+    ? [
+        {
+          type: "application/ld+json",
+          textContent: {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            itemListElement: catalog.value.map((product, index) => ({
+              "@type": "ListItem",
+              position: index + 1,
+              url: `${url.origin}/products/${product.id}`,
+              name: product.title,
+            })),
+          },
+        },
+      ]
+    : [],
+}));
 </script>
 
 <template>
