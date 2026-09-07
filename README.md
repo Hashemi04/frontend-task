@@ -18,7 +18,11 @@ App: [http://localhost:3000](http://localhost:3000)
 ```bash
 pnpm build
 pnpm preview
+pnpm lint
+pnpm test
 ```
+
+`pnpm lint` uses the Nuxt ESLint flat config. `pnpm test` runs Vitest on catalog query helpers (sort defaults, page clamp, category parse, URL page reset).
 
 ## Routes
 
@@ -103,7 +107,6 @@ The assignment’s desktop frame does not specify these; they are implemented so
 ## Gaps (honest)
 
 - **No live Fake Store fetch.** Mocks only. Loading/error branches are idle.
-- **No test runner or ESLint** in this repo.
 - **Consult / FAQ / contact** are placeholders, not full pages.
 - Product cards do not show price (detail does).
 - JSON-LD `ItemList` currently lists the full mock catalog, not the filtered page.

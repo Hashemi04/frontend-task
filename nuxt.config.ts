@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
+  modules: ['@nuxt/eslint'],
   css: ['~/assets/css/main.css'],
   // Subfolders group components by domain; names stay unique so we skip the path prefix.
   components: [{ path: '~/components', pathPrefix: false }],

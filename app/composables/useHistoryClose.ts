@@ -41,8 +41,9 @@ export function useHistoryClose(
         return
       }
 
-      const nextState = { ...(history.state ?? {}) }
-      delete nextState[HISTORY_FLAG]
+      const { [HISTORY_FLAG]: _flag, ...nextState } = {
+        ...(history.state ?? {}),
+      }
       history.replaceState(nextState, '')
     },
   )
