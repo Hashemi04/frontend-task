@@ -94,7 +94,7 @@ useHead({
   script: [
     {
       type: "application/ld+json",
-      innerHTML: JSON.stringify({
+      textContent: {
         "@context": "https://schema.org",
         "@type": "ItemList",
         itemListElement: mockProducts.map((product, index) => ({
@@ -103,7 +103,7 @@ useHead({
           url: `${url.origin}/products/${product.id}`,
           name: product.title,
         })),
-      }),
+      },
     },
   ],
 });

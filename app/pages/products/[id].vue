@@ -44,7 +44,7 @@ useHead({
     ? [
         {
           type: 'application/ld+json',
-          innerHTML: JSON.stringify({
+          textContent: {
             '@context': 'https://schema.org',
             '@type': 'Product',
             name: product.title,
@@ -64,7 +64,7 @@ useHead({
               ratingValue: product.rating.rate,
               reviewCount: product.rating.count,
             },
-          }),
+          },
         },
       ]
     : [],
