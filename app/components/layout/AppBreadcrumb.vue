@@ -5,12 +5,15 @@ defineProps<{
 </script>
 
 <template>
-  <nav aria-label="مسیر صفحه" class="mb-5 text-sm">
-    <ol class="flex flex-wrap items-center gap-2">
+  <nav
+    aria-label="مسیر صفحه"
+    class="mb-5 min-w-0 overflow-x-auto text-sm [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+  >
+    <ol class="flex w-max flex-nowrap items-center gap-2">
       <li
         v-for="(item, index) in items"
         :key="`${item.label ?? item.icon}-${index}`"
-        class="flex min-w-0 items-center gap-2"
+        class="flex shrink-0 items-center gap-2"
       >
         <NuxtLink
           v-if="item.to && item.icon === 'home'"
@@ -23,11 +26,11 @@ defineProps<{
         <NuxtLink
           v-else-if="item.to"
           :to="item.to"
-          class="text-muted transition-colors hover:text-primary"
+          class="whitespace-nowrap text-muted transition-colors hover:text-primary"
         >
           {{ item.label }}
         </NuxtLink>
-        <span v-else class="min-w-0 truncate font-medium text-ink">
+        <span v-else class="whitespace-nowrap font-medium text-ink">
           {{ item.label }}
         </span>
         <IconChevron

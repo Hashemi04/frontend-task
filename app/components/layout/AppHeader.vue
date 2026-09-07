@@ -61,10 +61,10 @@ watch(
         </button>
         <NuxtLink
           :to="PHONE_HREF"
-          :class="[mobileIconButton, 'md:hidden']"
+          class="inline-flex size-10 text-social-hover md:hidden"
           aria-label="تماس"
         >
-          <IconPhone class="size-5" />
+          <IconPhone framed class="size-10" />
         </NuxtLink>
         <span class="hidden md:inline-flex">
           <BaseButton :to="PHONE_HREF">

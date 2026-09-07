@@ -40,6 +40,17 @@ useSeoMeta({
   ogImage: product.value?.image,
 });
 
+onMounted(() => {
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+});
+
+watch(
+  () => route.params.id,
+  () => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  },
+);
+
 useHead(() => ({
   script: product.value
     ? [

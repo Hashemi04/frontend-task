@@ -7,7 +7,7 @@
       رفتن به محتوا
     </a>
     <AppHeader />
-    <main id="main" class="relative min-h-0 flex-1 overflow-x-clip">
+    <main id="main" class="relative min-h-0 flex-1">
       <slot />
     </main>
     <AppFooter />
