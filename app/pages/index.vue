@@ -19,8 +19,12 @@ const {
   categoryCounts,
   hasAppliedFilters,
   filteredProducts,
+  page,
+  totalPages,
+  pagedProducts,
   setQuery,
   setSort,
+  setPage,
   clearSort,
   toggleCategory,
   clearCategory,
@@ -62,6 +66,23 @@ const emptyCopy = computed(() =>
 
 function retryCatalog() {
   catalogError.value = null;
+}
+
+function goToPage(next: number) {
+  if (next === page.value) {
+    return;
+  }
+
+  setPage(next);
+  nextTick(() => {
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    document.getElementById("product-catalog")?.scrollIntoView({
+      behavior: reduced ? "auto" : "smooth",
+      block: "start",
+    });
+  });
 }
 
 const appliedCount = computed(
@@ -160,7 +181,15 @@ useHead({
             :description="emptyCopy.description"
           />
           <!-- ready: at least one product after filters -->
-          <ProductGrid v-else class="catalog-in" :products="filteredProducts" />
+          <div v-else id="product-catalog" class="scroll-mt-32 md:scroll-mt-36">
+            <ProductGrid class="catalog-in" :products="pagedProducts" />
+            <ProductPagination
+              v-if="totalPages > 1"
+              :page="page"
+              :total-pages="totalPages"
+              @change="goToPage"
+            />
+          </div>
         </div>
       </div>
     </div>

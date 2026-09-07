@@ -8,6 +8,7 @@ export const SORT_KEYS = [
 ] as const
 export type SortKey = (typeof SORT_KEYS)[number]
 export const DEFAULT_SORT: SortKey = 'count-asc'
+export const PAGE_SIZE = 9
 
 function queryString(value: unknown) {
   if (typeof value === 'string') {
@@ -23,6 +24,15 @@ function queryString(value: unknown) {
 
 function isSortKey(value: string): value is SortKey {
   return (SORT_KEYS as readonly string[]).includes(value)
+}
+
+function parsePage(value: unknown) {
+  const n = Number(queryString(value))
+  if (!Number.isInteger(n) || n < 1) {
+    return 1
+  }
+
+  return n
 }
 
 function parseCategories(value: unknown, allowed: string[]) {
@@ -98,8 +108,25 @@ export function useProductFilters(products: Product[], allCategories: string[]) 
     return [...list].sort((a, b) => compareProducts(a, b, sort.value))
   })
 
+  const requestedPage = computed(() => parsePage(route.query.page))
+
+  const totalPages = computed(() =>
+    Math.max(1, Math.ceil(filteredProducts.value.length / PAGE_SIZE)),
+  )
+
+  const page = computed(() => Math.min(requestedPage.value, totalPages.value))
+
+  const pagedProducts = computed(() => {
+    const start = (page.value - 1) * PAGE_SIZE
+    return filteredProducts.value.slice(start, start + PAGE_SIZE)
+  })
+
   function patchQuery(updates: Record<string, string | undefined>) {
     const current = { ...route.query }
+
+    if (!('page' in updates)) {
+      delete current.page
+    }
 
     for (const [key, value] of Object.entries(updates)) {
       if (value) {
@@ -111,6 +138,11 @@ export function useProductFilters(products: Product[], allCategories: string[]) 
     }
 
     router.replace({ path: route.path, query: current })
+  }
+
+  function setPage(next: number) {
+    const clamped = Math.min(Math.max(1, next), totalPages.value)
+    patchQuery({ page: clamped > 1 ? String(clamped) : undefined })
   }
 
   function setQuery(next: string) {
@@ -141,6 +173,17 @@ export function useProductFilters(products: Product[], allCategories: string[]) 
     patchQuery({ sort: undefined })
   }
 
+  function syncRequestedPage() {
+    if (requestedPage.value === page.value) {
+      return
+    }
+
+    setPage(page.value)
+  }
+
+  onMounted(syncRequestedPage)
+  watch(requestedPage, syncRequestedPage)
+
   return {
     query,
     sort,
@@ -149,8 +192,12 @@ export function useProductFilters(products: Product[], allCategories: string[]) 
     categoryCounts,
     hasAppliedFilters,
     filteredProducts,
+    page,
+    totalPages,
+    pagedProducts,
     setQuery,
     setSort,
+    setPage,
     clearSort,
     toggleCategory,
     clearCategory,
