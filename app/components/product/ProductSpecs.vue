@@ -39,7 +39,7 @@ const descriptionParts = computed(() =>
 
       <ProductSpecRow label="دسته‌بندی">
         <NuxtLink
-          class="text-primary hover:underline"
+          class="hover:underline"
           :to="{ path: '/', query: { categories: product.category } }"
         >
           {{ product.category }}
