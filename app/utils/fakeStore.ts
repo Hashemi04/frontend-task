@@ -9,8 +9,7 @@ export const CATALOG_CATEGORIES: Category[] = [
   "women's clothing",
 ]
 
-export function parsePro
-ductId(raw: unknown): number | null {
+export function parseProductId(raw: unknown): number | null {
   if (typeof raw !== 'string' || !/^[1-9]\d*$/.test(raw)) {
     return null
   }
