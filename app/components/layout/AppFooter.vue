@@ -9,23 +9,43 @@ import IconInstagram from "~/components/icons/IconInstagram.vue";
 import IconLinkedin from "~/components/icons/IconLinkedin.vue";
 import IconTelegram from "~/components/icons/IconTelegram.vue";
 
-const quickLinks = [
-  { to: "/about", label: "درباره ما" },
-  { to: "/blog", label: "بلاگ" },
-  { to: "/contact", label: "تماس با ما" },
-  { to: "/after-sales", label: "خدمات پس از فروش" },
-];
+type FooterLink = {
+  to: string;
+  label: string;
+  icon?: Component;
+};
 
-const guideLinks = [
-  { to: "/terms", label: "قوانین و مقررات" },
-  { to: "/consultation", label: "دریافت مشاوره" },
-  { to: "/feedback", label: "انتقادات و پیشنهادات" },
-];
-
-const socialLinks = [
-  { href: "/contact", label: "تلگرام", icon: IconTelegram },
-  { href: "/contact", label: "اینستاگرام", icon: IconInstagram },
-  { href: "/contact", label: "لینکدین", icon: IconLinkedin },
+const columns: {
+  title: string;
+  links: FooterLink[];
+  wide?: boolean;
+}[] = [
+  {
+    title: "دسترسی سریع",
+    links: [
+      { to: "/about", label: "درباره ما" },
+      { to: "/blog", label: "بلاگ" },
+      { to: "/contact", label: "تماس با ما" },
+      { to: "/after-sales", label: "خدمات پس از فروش" },
+    ],
+  },
+  {
+    title: "راهنمای سایت",
+    links: [
+      { to: "/terms", label: "قوانین و مقررات" },
+      { to: "/consultation", label: "دریافت مشاوره" },
+      { to: "/feedback", label: "انتقادات و پیشنهادات" },
+    ],
+  },
+  {
+    title: "شبکه‌های اجتماعی",
+    wide: true,
+    links: [
+      { to: "/contact", label: "تلگرام", icon: IconTelegram },
+      { to: "/contact", label: "اینستاگرام", icon: IconInstagram },
+      { to: "/contact", label: "لینکدین", icon: IconLinkedin },
+    ],
+  },
 ];
 
 const bottomSocial: { href: string; label: string; icon: Component }[] = [
@@ -46,43 +66,23 @@ const bottomSocial: { href: string; label: string; icon: Component }[] = [
         هفت روز هفته از ۸ صبح تا ۱۲ شب پاسخگو هستیم
       </p>
 
-      <section>
-        <h2 class="mb-4 text-base font-bold text-ink">دسترسی سریع</h2>
-        <ul class="space-y-2.5 text-sm">
-          <li v-for="(link, index) in quickLinks" :key="link.label">
+      <section
+        v-for="column in columns"
+        :key="column.title"
+        :class="column.wide && 'col-span-2 md:col-span-1'"
+      >
+        <h2 class="mb-4 text-base font-bold text-ink">{{ column.title }}</h2>
+        <ul
+          class="text-sm text-muted"
+          :class="column.wide ? 'space-y-3' : 'space-y-2.5'"
+        >
+          <li v-for="link in column.links" :key="link.label">
             <NuxtLink
               :to="link.to"
-              class="transition-colors hover:text-primary"
-              :class="index === 0 ? 'text-primary' : 'text-muted'"
-            >
-              {{ link.label }}
-            </NuxtLink>
-          </li>
-        </ul>
-      </section>
-
-      <section>
-        <h2 class="mb-4 text-base font-bold text-ink">راهنمای سایت</h2>
-        <ul class="space-y-2.5 text-sm text-muted">
-          <li v-for="link in guideLinks" :key="link.label">
-            <NuxtLink
-              :to="link.to"
-              class="transition-colors hover:text-primary"
-            >
-              {{ link.label }}
-            </NuxtLink>
-          </li>
-        </ul>
-      </section>
-
-      <section class="col-span-2 md:col-span-1">
-        <ul class="space-y-3 text-sm text-muted">
-          <li v-for="link in socialLinks" :key="link.label">
-            <NuxtLink
-              :to="link.href"
               class="flex items-center gap-2.5 transition-colors hover:text-primary"
             >
               <span
+                v-if="link.icon"
                 class="flex size-7 shrink-0 items-center justify-center rounded-full bg-page text-ink"
               >
                 <component :is="link.icon" class="size-3.5" />
