@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { formatCount } from "~/utils/format";
 import { catalogCategories } from "~/utils/fakeStore";
+import { catalogImage } from "~/utils/catalogImage";
 
 definePageMeta({
   pageTransition: false,
@@ -97,25 +98,40 @@ const appliedCount = computed(
     (available.value ? 1 : 0),
 );
 
-useHead(() => ({
-  script: catalog.value.length
-    ? [
-        {
-          type: "application/ld+json",
-          textContent: {
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            itemListElement: catalog.value.map((product, index) => ({
-              "@type": "ListItem",
-              position: index + 1,
-              url: `${url.origin}/products/${product.id}`,
-              name: product.title,
-            })),
+useHead(() => {
+  const lcp = pagedProducts.value[0];
+
+  return {
+    link: lcp
+      ? [
+          {
+            rel: "preload",
+            as: "image",
+            type: "image/webp",
+            href: `${url.origin}${catalogImage(lcp.image, 400)}`,
+            fetchPriority: "high",
           },
-        },
-      ]
-    : [],
-}));
+        ]
+      : [],
+    script: catalog.value.length
+      ? [
+          {
+            type: "application/ld+json",
+            textContent: {
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              itemListElement: catalog.value.map((product, index) => ({
+                "@type": "ListItem",
+                position: index + 1,
+                url: `${url.origin}/products/${product.id}`,
+                name: product.title,
+              })),
+            },
+          },
+        ]
+      : [],
+  };
+});
 </script>
 
 <template>

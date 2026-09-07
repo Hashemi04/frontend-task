@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Product } from "~/types/product";
+import { catalogImage } from "~/utils/catalogImage";
 
 defineProps<{
   product: Product;
@@ -59,10 +60,12 @@ onUnmounted(() => {
     <div class="relative overflow-hidden rounded-2xl bg-page">
       <img
         class="mx-auto block h-auto max-h-hero w-full object-contain p-4 md:p-8 lg:p-10"
-        :src="product.image"
+        :src="catalogImage(product.image, 640)"
         :alt="product.title"
-        width="600"
-        height="600"
+        width="640"
+        height="640"
+        fetchpriority="high"
+        decoding="async"
       />
       <button
         type="button"
@@ -96,7 +99,7 @@ onUnmounted(() => {
       </button>
       <img
         class="max-h-[90dvh] max-w-full object-contain"
-        :src="product.image"
+        :src="catalogImage(product.image, 1000)"
         :alt="product.title"
       />
     </div>

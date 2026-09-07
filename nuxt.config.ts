@@ -28,8 +28,14 @@ export default defineNuxtConfig({
         },
       ],
       link: [
-        { rel: 'preconnect', href: 'https://cdn.jsdelivr.net' },
-        { rel: 'preconnect', href: 'https://fakestoreapi.com' },
+        { rel: "preconnect", href: "https://cdn.jsdelivr.net", crossorigin: "" },
+        {
+          rel: "preload",
+          as: "font",
+          type: "font/woff2",
+          href: "https://cdn.jsdelivr.net/gh/AmirAbbasVafaee/persian-fonts-cdn@main/fonts/yekan-bakh/YekanBakhFaNum-Regular.woff2",
+          crossorigin: "anonymous",
+        },
       ],
     },
   },
@@ -46,6 +52,13 @@ export default defineNuxtConfig({
       '/after-sales': { swr: 120 },
       '/terms': { swr: 120 },
       '/feedback': { swr: 120 },
+      '/api/products': { swr: 600 },
+      '/api/products/**': { swr: 600 },
+      '/img**': {
+        headers: {
+          'cache-control': 'public, max-age=31536000, immutable',
+        },
+      },
       '/_nuxt/**': {
         headers: {
           'cache-control': 'public, max-age=31536000, immutable',

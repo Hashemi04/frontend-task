@@ -10,12 +10,13 @@
   --color-page: #eef1f6;
   --color-surface: #ffffff;
   --color-ink: #0a2a51;
-  --color-muted: #64748b;
+  --color-muted: #5a6b82;
   --color-line: #e2e8f0;
   --color-section-title: #445a74;
   --color-heading: #253343;
   --color-filter-item: #344456;
   --color-social: #f180a9;
+  --color-social-hover: #e20054;
   --color-spec-value: #30445b;
   --color-spec-box: #f5f7fa;
 
@@ -67,23 +68,7 @@ body {
 @font-face {
   font-family: 'Yekan Bakh';
   src: url('https://cdn.jsdelivr.net/gh/AmirAbbasVafaee/persian-fonts-cdn@main/fonts/yekan-bakh/YekanBakhFaNum-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Yekan Bakh';
-  src: url('https://cdn.jsdelivr.net/gh/AmirAbbasVafaee/persian-fonts-cdn@main/fonts/yekan-bakh/YekanBakhFaNum-Regular.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Yekan Bakh';
-  src: url('https://cdn.jsdelivr.net/gh/AmirAbbasVafaee/persian-fonts-cdn@main/fonts/yekan-bakh/YekanBakhFaNum-SemiBold.woff2') format('woff2');
-  font-weight: 600;
+  font-weight: 400 500;
   font-style: normal;
   font-display: swap;
 }
@@ -91,7 +76,7 @@ body {
 @font-face {
   font-family: 'Yekan Bakh';
   src: url('https://cdn.jsdelivr.net/gh/AmirAbbasVafaee/persian-fonts-cdn@main/fonts/yekan-bakh/YekanBakhFaNum-Bold.woff2') format('woff2');
-  font-weight: 700;
+  font-weight: 600 700;
   font-style: normal;
   font-display: swap;
 }

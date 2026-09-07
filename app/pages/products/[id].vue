@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { parseProductId } from "~/utils/fakeStore";
+import { catalogImage } from "~/utils/catalogImage";
 
 const route = useRoute();
 const rawId = Array.isArray(route.params.id)
@@ -52,6 +53,17 @@ watch(
 );
 
 useHead(() => ({
+  link: product.value
+    ? [
+        {
+          rel: "preload",
+          as: "image",
+          type: "image/webp",
+          href: `${url.origin}${catalogImage(product.value.image, 640)}`,
+          fetchPriority: "high",
+        },
+      ]
+    : [],
   script: product.value
     ? [
         {

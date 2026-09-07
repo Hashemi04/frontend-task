@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Product } from '~/types/product'
+import { catalogImage } from '~/utils/catalogImage'
 
 defineProps<{
   product: Product
@@ -18,11 +19,12 @@ defineProps<{
     >
       <img
         class="block w-full aspect-[4/3] object-contain p-4"
-        :src="product.image"
+        :src="catalogImage(product.image, 400)"
         :alt="product.title"
         :loading="priority ? 'eager' : 'lazy'"
         :fetchpriority="priority ? 'high' : 'auto'"
-        :decoding="priority ? 'sync' : 'async'"
+        decoding="async"
+        sizes="(min-width: 1024px) 280px, (min-width: 768px) 45vw, 90vw"
         width="400"
         height="300"
       >

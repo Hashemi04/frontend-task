@@ -97,7 +97,7 @@ const bottomSocial: { href: string; label: string; icon: Component }[] = [
     <div class="bg-page">
       <div class="relative mx-auto max-w-[1440px] px-4 py-6 md:px-10 lg:px-16">
         <div class="flex flex-col items-center gap-3 text-center">
-          <p class="max-w-xl text-xs leading-6 text-muted">
+          <p class="max-w-xl text-xs leading-6 text-section-title">
             تمامی حقوق مادی و معنوی این وب‌سایت محفوظ است و هرگونه کپی‌برداری
             پیگرد قانونی دارد.
           </p>
@@ -123,6 +123,8 @@ const bottomSocial: { href: string; label: string; icon: Component }[] = [
             width="72"
             height="72"
             class="size-[72px] rounded-md bg-surface object-contain shadow-sm"
+            loading="lazy"
+            decoding="async"
           />
           <img
             src="/samandehi.png"
@@ -130,6 +132,8 @@ const bottomSocial: { href: string; label: string; icon: Component }[] = [
             width="72"
             height="72"
             class="size-[72px] rounded-md bg-surface object-contain shadow-sm"
+            loading="lazy"
+            decoding="async"
           />
         </div>
       </div>
