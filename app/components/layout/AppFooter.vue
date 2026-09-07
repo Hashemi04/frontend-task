@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import type { Component } from "vue";
+import IconBadgeInstagram from "~/components/icons/IconBadgeInstagram.vue";
+import IconBadgeLinkedin from "~/components/icons/IconBadgeLinkedin.vue";
+import IconBadgeTelegram from "~/components/icons/IconBadgeTelegram.vue";
+import IconBadgeX from "~/components/icons/IconBadgeX.vue";
+import IconBadgeYoutube from "~/components/icons/IconBadgeYoutube.vue";
 import IconInstagram from "~/components/icons/IconInstagram.vue";
 import IconLinkedin from "~/components/icons/IconLinkedin.vue";
 import IconTelegram from "~/components/icons/IconTelegram.vue";
-import IconX from "~/components/icons/IconX.vue";
-import IconYoutube from "~/components/icons/IconYoutube.vue";
 
 const quickLinks = [
   { to: "/contact", label: "درباره ما" },
@@ -20,17 +23,17 @@ const guideLinks = [
 ];
 
 const socialLinks = [
-  { href: "#", label: "تلگرام", icon: IconTelegram },
-  { href: "#", label: "اینستاگرام", icon: IconInstagram },
-  { href: "#", label: "لینکدین", icon: IconLinkedin },
+  { href: "/contact", label: "تلگرام", icon: IconTelegram },
+  { href: "/contact", label: "اینستاگرام", icon: IconInstagram },
+  { href: "/contact", label: "لینکدین", icon: IconLinkedin },
 ];
 
 const bottomSocial: { href: string; label: string; icon: Component }[] = [
-  { href: "#", label: "تلگرام", icon: IconTelegram },
-  { href: "#", label: "اینستاگرام", icon: IconInstagram },
-  { href: "#", label: "ایکس", icon: IconX },
-  { href: "#", label: "یوتیوب", icon: IconYoutube },
-  { href: "#", label: "لینکدین", icon: IconLinkedin },
+  { href: "/contact", label: "تلگرام", icon: IconBadgeTelegram },
+  { href: "/contact", label: "اینستاگرام", icon: IconBadgeInstagram },
+  { href: "/contact", label: "ایکس", icon: IconBadgeX },
+  { href: "/contact", label: "یوتیوب", icon: IconBadgeYoutube },
+  { href: "/contact", label: "لینکدین", icon: IconBadgeLinkedin },
 ];
 </script>
 
@@ -76,10 +79,9 @@ const bottomSocial: { href: string; label: string; icon: Component }[] = [
         <h2 class="mb-4 text-base font-bold text-ink">شبکه‌های اجتماعی</h2>
         <ul class="space-y-3 text-sm text-muted">
           <li v-for="link in socialLinks" :key="link.label">
-            <a
-              :href="link.href"
+            <NuxtLink
+              :to="link.href"
               class="flex items-center gap-2.5 transition-colors hover:text-primary"
-              rel="nofollow noopener"
             >
               <span
                 class="flex size-7 shrink-0 items-center justify-center rounded-full bg-page text-ink"
@@ -87,7 +89,7 @@ const bottomSocial: { href: string; label: string; icon: Component }[] = [
                 <component :is="link.icon" class="size-3.5" />
               </span>
               {{ link.label }}
-            </a>
+            </NuxtLink>
           </li>
         </ul>
       </section>
@@ -100,30 +102,35 @@ const bottomSocial: { href: string; label: string; icon: Component }[] = [
             تمامی حقوق مادی و معنوی این وب‌سایت محفوظ است و هرگونه کپی‌برداری
             پیگرد قانونی دارد.
           </p>
-          <div class="flex items-center gap-2" dir="ltr">
-            <a
+          <div class="flex items-center gap-4" dir="ltr">
+            <NuxtLink
               v-for="item in bottomSocial"
               :key="item.label"
-              :href="item.href"
+              :to="item.href"
               :aria-label="item.label"
-              class="flex size-8 items-center justify-center rounded-full bg-primary text-white"
-              rel="nofollow noopener"
+              class="flex size-6 items-center justify-center text-social transition-colors hover:text-social-hover"
             >
-              <component :is="item.icon" class="size-3.5" />
-            </a>
+              <component :is="item.icon" class="size-6" />
+            </NuxtLink>
           </div>
         </div>
 
         <div
           class="mt-4 flex justify-center gap-3 md:absolute md:end-10 md:top-1/2 md:mt-0 md:-translate-y-1/2 lg:end-16"
         >
-          <span
-            class="size-14 rounded-md bg-surface shadow-sm"
-            aria-label="نماد اعتماد"
+          <img
+            src="/enamad.png"
+            alt="نماد اعتماد الکترونیکی"
+            width="72"
+            height="72"
+            class="size-[72px] rounded-md bg-surface object-contain shadow-sm"
           />
-          <span
-            class="size-14 rounded-md bg-surface shadow-sm"
-            aria-label="نماد ساماندهی"
+          <img
+            src="/samandehi.png"
+            alt="ستاد ساماندهی پایگاه‌های اینترنتی"
+            width="72"
+            height="72"
+            class="size-[72px] rounded-md bg-surface object-contain shadow-sm"
           />
         </div>
       </div>
