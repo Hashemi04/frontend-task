@@ -141,7 +141,7 @@ useHead(() => ({
           class="sticky top-14 z-20 mb-4 flex items-stretch gap-2 bg-page py-2 md:top-18 md:mb-5 md:py-3"
         >
           <div
-            class="flex min-h-11 min-w-0 flex-1 items-center justify-between gap-3 rounded-2xl bg-surface px-4 py-2.5 shadow-card lg:min-h-0 lg:rounded-3xl lg:p-6"
+            class="flex h-11 min-w-0 flex-1 items-center justify-between gap-3 overflow-hidden rounded-2xl bg-surface px-4 shadow-card lg:h-16 lg:rounded-3xl lg:px-6"
           >
             <h1 class="shrink-0 text-sm font-medium leading-4 text-heading">
               <span :class="hasAppliedFilters ? 'lg:hidden' : undefined">
@@ -153,7 +153,7 @@ useHead(() => ({
             </h1>
             <AppliedFilters
               v-if="hasAppliedFilters"
-              class="max-lg:hidden"
+              class="min-w-0 flex-1 max-lg:hidden"
               :query="query"
               :sort="appliedSort"
               :available="available"

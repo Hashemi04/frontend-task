@@ -28,7 +28,7 @@ function sortLabel(sort: SortKey) {
     <li v-if="query" class="shrink-0">
       <button
         type="button"
-        class="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-primary-soft py-1 pe-2.5 ps-2 text-xs text-ink"
+        class="inline-flex h-7 cursor-pointer items-center gap-1.5 rounded-full bg-primary-soft pe-2.5 ps-2 text-xs text-ink"
         :aria-label="`حذف جستجوی ${query}`"
         @click="emit('clearSearch')"
       >
@@ -40,7 +40,7 @@ function sortLabel(sort: SortKey) {
     <li v-if="available" class="shrink-0">
       <button
         type="button"
-        class="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-primary-soft py-1 pe-2.5 ps-2 text-xs text-ink"
+        class="inline-flex h-7 cursor-pointer items-center gap-1.5 rounded-full bg-primary-soft pe-2.5 ps-2 text-xs text-ink"
         aria-label="حذف فیلتر محصولات موجود"
         @click="emit('clearAvailable')"
       >
@@ -51,7 +51,7 @@ function sortLabel(sort: SortKey) {
     <li v-if="sort" class="shrink-0">
       <button
         type="button"
-        class="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-primary-soft py-1 pe-2.5 ps-2 text-xs text-ink"
+        class="inline-flex h-7 cursor-pointer items-center gap-1.5 rounded-full bg-primary-soft pe-2.5 ps-2 text-xs text-ink"
         :aria-label="`حذف مرتب‌سازی ${sortLabel(sort)}`"
         @click="emit('clearSort')"
       >
@@ -63,7 +63,7 @@ function sortLabel(sort: SortKey) {
     <li v-for="category in categories" :key="category" class="shrink-0">
       <button
         type="button"
-        class="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-primary-soft py-1 pe-2.5 ps-2 text-xs text-ink"
+        class="inline-flex h-7 cursor-pointer items-center gap-1.5 rounded-full bg-primary-soft pe-2.5 ps-2 text-xs text-ink"
         :aria-label="`حذف دسته ${category}`"
         @click="emit('clearCategory', category)"
       >
