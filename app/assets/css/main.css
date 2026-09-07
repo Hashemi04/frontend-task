@@ -16,7 +16,8 @@
   --color-heading: #253343;
   --color-filter-item: #344456;
   --color-social: #f180a9;
-  --color-social-hover: #e20054;
+  --color-spec-value: #30445b;
+  --color-spec-box: #f5f7fa;
 
   --radius-card: 24px;
   --shadow-card: 0 8px 24px rgb(15 23 42 / 6%);
