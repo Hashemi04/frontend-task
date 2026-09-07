@@ -27,7 +27,25 @@ export default defineNuxtConfig({
           content: 'فهرست و جزئیات محصولات از فروشگاه آزمایشی Fake Store.',
         },
       ],
-      link: [{ rel: 'preconnect', href: 'https://cdn.jsdelivr.net' }],
+      link: [
+        { rel: 'preconnect', href: 'https://cdn.jsdelivr.net' },
+        { rel: 'preconnect', href: 'https://fakestoreapi.com' },
+      ],
+    },
+  },
+  nitro: {
+    compressPublicAssets: true,
+    routeRules: {
+      '/': { swr: 120 },
+      '/products/**': { swr: 120 },
+      '/consultation': { swr: 120 },
+      '/faq': { swr: 120 },
+      '/contact': { swr: 120 },
+      '/_nuxt/**': {
+        headers: {
+          'cache-control': 'public, max-age=31536000, immutable',
+        },
+      },
     },
   },
 });

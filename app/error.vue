@@ -24,6 +24,7 @@ function goHome() {
 useSeoMeta({
   title,
   description,
+  robots: 'noindex, nofollow',
 })
 </script>
 

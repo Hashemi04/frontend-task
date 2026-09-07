@@ -1,9 +1,15 @@
 <template>
   <div class="flex min-h-dvh flex-col">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-3 focus:rounded-lg focus:bg-surface focus:px-3 focus:py-2 focus:text-sm focus:text-ink"
+    >
+      رفتن به محتوا
+    </a>
     <AppHeader />
-    <div class="relative min-h-0 flex-1 overflow-x-clip">
+    <main id="main" class="relative min-h-0 flex-1 overflow-x-clip">
       <slot />
-    </div>
+    </main>
     <AppFooter />
   </div>
 </template>

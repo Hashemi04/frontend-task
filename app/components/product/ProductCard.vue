@@ -19,6 +19,7 @@ defineProps<{
         :alt="product.title"
         :loading="priority ? 'eager' : 'lazy'"
         :fetchpriority="priority ? 'high' : 'auto'"
+        :decoding="priority ? 'sync' : 'async'"
         width="400"
         height="300"
       >
