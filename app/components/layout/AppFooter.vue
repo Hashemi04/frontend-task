@@ -38,11 +38,11 @@ const bottomSocial: { href: string; label: string; icon: Component }[] = [
 </script>
 
 <template>
-  <footer class="mt-10 bg-surface">
+  <footer class="mt-10 rounded-t-2xl bg-surface">
     <div
-      class="mx-auto grid max-w-[1440px] gap-10 px-4 py-12 md:grid-cols-4 md:items-start md:gap-8 md:px-10 lg:px-16"
+      class="mx-auto grid max-w-[1440px] grid-cols-2 items-start gap-x-8 gap-y-10 px-4 py-12 md:grid-cols-4 md:gap-8 md:px-10 lg:px-16"
     >
-      <p class="text-sm leading-8 text-muted md:max-w-[14rem]">
+      <p class="col-span-2 text-sm leading-8 text-muted md:col-span-1 md:max-w-[14rem]">
         هفت روز هفته از ۸ صبح تا ۱۲ شب پاسخگو هستیم
       </p>
 
@@ -75,8 +75,7 @@ const bottomSocial: { href: string; label: string; icon: Component }[] = [
         </ul>
       </section>
 
-      <section>
-        <h2 class="mb-4 text-base font-bold text-ink">شبکه‌های اجتماعی</h2>
+      <section class="col-span-2 md:col-span-1">
         <ul class="space-y-3 text-sm text-muted">
           <li v-for="link in socialLinks" :key="link.label">
             <NuxtLink
