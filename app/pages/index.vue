@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import { mockCategories, mockProducts } from '~/data/mockProducts'
+import { mockCategories, mockProducts } from "~/data/mockProducts";
+
+definePageMeta({
+  pageTransition: false,
+});
 
 usePageSeo({
-  title: 'لیست محصولات',
-  description: 'جستجو و مشاهده فهرست محصولات فروشگاه.',
-})
+  title: "لیست محصولات",
+  description: "جستجو و مشاهده فهرست محصولات فروشگاه.",
+});
 
-const url = useRequestURL()
+const url = useRequestURL();
 const {
   query,
   sort,
@@ -20,59 +24,59 @@ const {
   clearSort,
   toggleCategory,
   clearCategory,
-} = useProductFilters(mockProducts, mockCategories)
+} = useProductFilters(mockProducts, mockCategories);
 
-const filtersOpen = ref(false)
+const filtersOpen = ref(false);
 
 // Catalog request flags. Mocks resolve immediately; feat/api swaps these
 // for useAsyncData pending / error / refresh.
-const catalogPending = ref(false)
-const catalogError = ref<Error | null>(null)
+const catalogPending = ref(false);
+const catalogError = ref<Error | null>(null);
 
-type CatalogView = 'loading' | 'error' | 'empty' | 'ready'
+type CatalogView = "loading" | "error" | "empty" | "ready";
 
 const catalogView = computed<CatalogView>(() => {
   if (catalogPending.value) {
-    return 'loading'
+    return "loading";
   }
   if (catalogError.value) {
-    return 'error'
+    return "error";
   }
   if (!filteredProducts.value.length) {
-    return 'empty'
+    return "empty";
   }
-  return 'ready'
-})
+  return "ready";
+});
 
 const emptyCopy = computed(() =>
   hasAppliedFilters.value
     ? {
-        title: 'محصولی پیدا نشد',
-        description: 'محصولی با این فیلتر پیدا نشد.',
+        title: "محصولی پیدا نشد",
+        description: "محصولی با این فیلتر پیدا نشد.",
       }
     : {
-        title: 'محصولی وجود ندارد',
-        description: 'در حال حاضر محصولی در فروشگاه نیست.',
+        title: "محصولی وجود ندارد",
+        description: "در حال حاضر محصولی در فروشگاه نیست.",
       },
-)
+);
 
 function retryCatalog() {
-  catalogError.value = null
+  catalogError.value = null;
 }
 
 const appliedCount = computed(
   () => (appliedSort.value ? 1 : 0) + selectedCategories.value.length,
-)
+);
 
 useHead({
   script: [
     {
-      type: 'application/ld+json',
+      type: "application/ld+json",
       innerHTML: JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'ItemList',
+        "@context": "https://schema.org",
+        "@type": "ItemList",
         itemListElement: mockProducts.map((product, index) => ({
-          '@type': 'ListItem',
+          "@type": "ListItem",
           position: index + 1,
           url: `${url.origin}/products/${product.id}`,
           name: product.title,
@@ -80,7 +84,7 @@ useHead({
       }),
     },
   ],
-})
+});
 </script>
 
 <template>
@@ -114,7 +118,7 @@ useHead({
               v-if="appliedCount"
               class="grid min-w-5 place-items-center rounded-full bg-primary px-1.5 text-[11px] text-white"
             >
-              {{ appliedCount.toLocaleString('fa-IR') }}
+              {{ appliedCount.toLocaleString("fa-IR") }}
             </span>
           </BaseButton>
           <AppliedFilters
@@ -127,33 +131,32 @@ useHead({
             @clear-category="clearCategory"
           />
         </div>
-        <!-- loading: catalog request in flight -->
-        <StateMessage
-          v-if="catalogView === 'loading'"
-          status="loading"
-          title="در حال بارگذاری"
-          description="در حال دریافت فهرست محصولات."
-        />
-        <!-- error: catalog request failed -->
-        <StateMessage
-          v-else-if="catalogView === 'error'"
-          status="error"
-          title="دریافت محصولات با خطا مواجه شد"
-          description="اتصال را بررسی کنید و دوباره تلاش کنید."
-          @action="retryCatalog"
-        />
-        <!-- empty: request succeeded, nothing to show (no catalog rows, or filters matched none) -->
-        <StateMessage
-          v-else-if="catalogView === 'empty'"
-          status="empty"
-          :title="emptyCopy.title"
-          :description="emptyCopy.description"
-        />
-        <!-- ready: at least one product after filters -->
-        <ProductGrid
-          v-else
-          :products="filteredProducts"
-        />
+        <div class="overflow-hidden">
+          <!-- loading: catalog request in flight -->
+          <StateMessage
+            v-if="catalogView === 'loading'"
+            status="loading"
+            title="در حال بارگذاری"
+            description="در حال دریافت فهرست محصولات."
+          />
+          <!-- error: catalog request failed -->
+          <StateMessage
+            v-else-if="catalogView === 'error'"
+            status="error"
+            title="دریافت محصولات با خطا مواجه شد"
+            description="اتصال را بررسی کنید و دوباره تلاش کنید."
+            @action="retryCatalog"
+          />
+          <!-- empty: request succeeded, nothing to show (no catalog rows, or filters matched none) -->
+          <StateMessage
+            v-else-if="catalogView === 'empty'"
+            status="empty"
+            :title="emptyCopy.title"
+            :description="emptyCopy.description"
+          />
+          <!-- ready: at least one product after filters -->
+          <ProductGrid v-else class="catalog-in" :products="filteredProducts" />
+        </div>
       </div>
     </div>
 
@@ -169,7 +172,9 @@ useHead({
           <div
             data-sheet-handle
             class="flex touch-none select-none flex-col items-center px-4"
-            :class="expanded ? 'pt-[max(0.75rem,env(safe-area-inset-top))]' : 'pt-3'"
+            :class="
+              expanded ? 'pt-[max(0.75rem,env(safe-area-inset-top))]' : 'pt-3'
+            "
           >
             <span
               class="mb-3 h-1.5 w-12 cursor-grab rounded-full bg-line active:cursor-grabbing"

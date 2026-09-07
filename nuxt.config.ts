@@ -11,6 +11,7 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
   app: {
+    pageTransition: { name: 'page' },
     head: {
       htmlAttrs: {
         lang: 'fa',
