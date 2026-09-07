@@ -129,6 +129,7 @@ useHead(() => ({
 
       <div class="min-w-0 flex-1">
         <div
+          id="catalog-toolbar"
           class="sticky top-14 z-20 mb-4 flex items-stretch gap-2 bg-page py-2 md:top-18 md:mb-5 md:py-3"
         >
           <div

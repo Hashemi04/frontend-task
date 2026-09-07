@@ -19,7 +19,14 @@ export default {
         const tryScroll = (attempt = 0) => {
           const el = document.getElementById(`product-card-${productId}`);
           if (el) {
-            resolve({ el, behavior: "auto" });
+            const header = document.querySelector("header");
+            const toolbar = document.getElementById("catalog-toolbar");
+            const top =
+              (header?.getBoundingClientRect().height ?? 56) +
+              (toolbar?.getBoundingClientRect().height ?? 0) +
+              8;
+
+            resolve({ el, top, behavior: "auto" });
             return;
           }
 

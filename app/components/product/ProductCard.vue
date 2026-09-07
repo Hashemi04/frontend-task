@@ -10,7 +10,7 @@ defineProps<{
 <template>
   <article
     :id="`product-card-${product.id}`"
-    class="scroll-mt-24 md:scroll-mt-32"
+    class="scroll-mt-[7.5rem] md:scroll-mt-[9.5rem]"
   >
     <NuxtLink
       :to="`/products/${product.id}`"
