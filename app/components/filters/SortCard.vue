@@ -70,12 +70,7 @@ const options: { value: SortKey; label: string }[] = [
               :value="option.value"
             />
             <span
-              class="text-sm"
-              :class="
-                selected === option.value
-                  ? 'font-medium text-ink'
-                  : 'text-muted'
-              "
+              class="text-right text-xs font-medium leading-4 text-filter-item"
             >
               {{ option.label }}
             </span>
