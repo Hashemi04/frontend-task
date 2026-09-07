@@ -1,9 +1,7 @@
-import type { LocationQueryRaw } from 'vue-router'
 import type { Product } from '~/types/product'
 import type { SortKey } from '~/utils/productQuery'
 import {
   PAGE_SIZE,
-  applyQueryUpdates,
   clampPage,
   compareProducts,
   parseAppliedSort,
@@ -17,7 +15,7 @@ export type { SortKey } from '~/utils/productQuery'
 
 export function useProductFilters(products: Product[], allCategories: string[]) {
   const route = useRoute()
-  const router = useRouter()
+  const { patchQuery, setQuery } = useCatalogQuery()
 
   const query = computed(() => queryString(route.query.q))
 
@@ -69,20 +67,9 @@ export function useProductFilters(products: Product[], allCategories: string[]) 
     return filteredProducts.value.slice(start, start + PAGE_SIZE)
   })
 
-  function patchQuery(updates: Record<string, string | undefined>) {
-    router.replace({
-      path: route.path,
-      query: applyQueryUpdates({ ...route.query }, updates) as LocationQueryRaw,
-    })
-  }
-
   function setPage(next: number) {
     const clamped = Math.min(Math.max(1, next), totalPages.value)
     patchQuery({ page: clamped > 1 ? String(clamped) : undefined })
-  }
-
-  function setQuery(next: string) {
-    patchQuery({ q: next.trim() || undefined })
   }
 
   function setSort(next: SortKey) {

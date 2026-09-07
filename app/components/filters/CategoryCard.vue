@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { formatCount } from "~/utils/format";
+
 const props = defineProps<{
   categories: { category: string; count: number }[];
   selected: string[];
@@ -12,10 +14,6 @@ const open = ref(true);
 
 function isSelected(category: string) {
   return props.selected.includes(category);
-}
-
-function formatCount(count: number) {
-  return count.toLocaleString("fa-IR");
 }
 </script>
 

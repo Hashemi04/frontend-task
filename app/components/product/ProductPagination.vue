@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { formatCount } from "~/utils/format";
+
 const props = defineProps<{
   page: number;
   totalPages: number;
@@ -33,10 +35,6 @@ const items = computed((): PageItem[] => {
   return out;
 });
 
-function formatPage(n: number) {
-  return n.toLocaleString("fa-IR");
-}
-
 const buttonClass =
   "inline-flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-surface text-heading shadow-card transition-colors hover:bg-primary-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-surface";
 </script>
@@ -59,7 +57,7 @@ const buttonClass =
     <p
       class="min-w-0 flex-1 text-center text-xs font-medium leading-4 text-heading md:hidden"
     >
-      صفحه {{ formatPage(page) }} از {{ formatPage(totalPages) }}
+      صفحه {{ formatCount(page) }} از {{ formatCount(totalPages) }}
     </p>
 
     <ul class="hidden items-center gap-1.5 md:flex">
@@ -81,10 +79,10 @@ const buttonClass =
               : 'bg-surface text-filter-item shadow-card hover:bg-primary-soft'
           "
           :aria-current="item === page ? 'page' : undefined"
-          :aria-label="`صفحه ${formatPage(item)}`"
+          :aria-label="`صفحه ${formatCount(item)}`"
           @click="emit('change', item)"
         >
-          {{ formatPage(item) }}
+          {{ formatCount(item) }}
         </button>
       </li>
     </ul>

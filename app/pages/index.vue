@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { mockCategories, mockProducts } from "~/data/mockProducts";
+import { formatCount } from "~/utils/format";
 
 definePageMeta({
   pageTransition: false,
@@ -140,7 +141,7 @@ useHead({
               v-if="appliedCount"
               class="grid min-w-5 place-items-center rounded-full bg-primary px-1.5 text-[11px] text-white"
             >
-              {{ appliedCount.toLocaleString("fa-IR") }}
+              {{ formatCount(appliedCount) }}
             </span>
           </BaseButton>
           <div

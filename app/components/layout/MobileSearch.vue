@@ -1,100 +1,87 @@
 <script setup lang="ts">
-import { mockProducts } from '~/data/mockProducts'
-import type { Product } from '~/types/product'
+import { mockProducts } from "~/data/mockProducts";
+import type { Product } from "~/types/product";
+import { queryString } from "~/utils/productQuery";
 
 const props = defineProps<{
-  open: boolean
-}>()
+  open: boolean;
+}>();
 
 const emit = defineEmits<{
-  close: []
-}>()
+  close: [];
+}>();
 
-const route = useRoute()
-const router = useRouter()
-const inputRef = ref<HTMLInputElement | null>(null)
-const draft = ref('')
+const route = useRoute();
+const { setQuery } = useCatalogQuery();
+const inputRef = ref<HTMLInputElement | null>(null);
+const draft = ref("");
 
-const term = computed(() => draft.value.trim())
+const term = computed(() => draft.value.trim());
 
-type TitlePart = { text: string, match: boolean }
+type TitlePart = { text: string; match: boolean };
 
 function escapeRegExp(value: string) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function highlightTitle(title: string, query: string): TitlePart[] {
   if (!query) {
-    return [{ text: title, match: false }]
+    return [{ text: title, match: false }];
   }
 
-  const parts = title.split(new RegExp(`(${escapeRegExp(query)})`, 'ig'))
-  const needle = query.toLowerCase()
+  const parts = title.split(new RegExp(`(${escapeRegExp(query)})`, "ig"));
+  const needle = query.toLowerCase();
 
-  return parts.filter(Boolean).map(part => ({
+  return parts.filter(Boolean).map((part) => ({
     text: part,
     match: part.toLowerCase() === needle,
-  }))
+  }));
 }
 
 const results = computed(() => {
   if (!term.value) {
-    return [] as { product: Product, parts: TitlePart[] }[]
+    return [] as { product: Product; parts: TitlePart[] }[];
   }
 
-  const needle = term.value.toLowerCase()
+  const needle = term.value.toLowerCase();
   return mockProducts
-    .filter(product => product.title.toLowerCase().includes(needle))
-    .map(product => ({
+    .filter((product) => product.title.toLowerCase().includes(needle))
+    .map((product) => ({
       product,
       parts: highlightTitle(product.title, term.value),
-    }))
-})
+    }));
+});
 
 watch(
   () => props.open,
   async (isOpen) => {
     if (!isOpen) {
-      return
+      return;
     }
 
-    const current = route.query.q
-    draft.value = typeof current === 'string' ? current : ''
-    await nextTick()
-    inputRef.value?.focus()
+    draft.value = queryString(route.query.q);
+    await nextTick();
+    inputRef.value?.focus();
   },
-)
+);
 
 function close() {
-  emit('close')
+  emit("close");
 }
 
 function commitToList() {
-  const nextQuery = route.path === '/' ? { ...route.query } : {}
-  if (term.value) {
-    nextQuery.q = term.value
-  }
-  else {
-    delete nextQuery.q
-  }
-
-  router.replace({ path: '/', query: nextQuery })
-  close()
+  setQuery(term.value);
+  close();
 }
 
 function clearDraft() {
-  draft.value = ''
-  inputRef.value?.focus()
+  draft.value = "";
+  inputRef.value?.focus();
 }
 </script>
 
 <template>
-  <BaseDrawer
-    placement="top"
-    :open="open"
-    title="جستجوی محصول"
-    @close="close"
-  >
+  <BaseDrawer placement="top" :open="open" title="جستجوی محصول" @close="close">
     <div class="flex min-h-0 flex-1 flex-col">
       <form
         class="flex items-center gap-2 border-b border-line px-4 py-3"
@@ -129,7 +116,7 @@ function clearDraft() {
             class="min-w-0 flex-1 bg-transparent pe-3 text-sm text-ink outline-none placeholder:text-muted"
             placeholder="جستجو"
             autocomplete="off"
-          >
+          />
           <button
             v-if="draft"
             type="button"
@@ -144,10 +131,7 @@ function clearDraft() {
 
       <div class="min-h-0 flex-1 overflow-y-auto px-4 py-3">
         <!-- idle: no query yet — not an empty/error state -->
-        <p
-          v-if="!term"
-          class="px-1 py-6 text-center text-sm text-muted"
-        >
+        <p v-if="!term" class="px-1 py-6 text-center text-sm text-muted">
           نام محصول را بنویسید
         </p>
         <!-- empty: typed query, no title matches. loading/error are not used here
@@ -171,13 +155,14 @@ function clearDraft() {
                 width="48"
                 height="48"
                 class="size-12 shrink-0 rounded-lg bg-page object-contain p-1"
-              >
+              />
               <p class="min-w-0 flex-1 text-sm font-medium leading-6">
                 <template v-for="(part, index) in parts" :key="index">
                   <mark
                     v-if="part.match"
                     class="rounded-sm bg-primary-soft text-primary"
-                  >{{ part.text }}</mark>
+                    >{{ part.text }}</mark
+                  >
                   <span v-else>{{ part.text }}</span>
                 </template>
               </p>

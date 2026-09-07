@@ -9,6 +9,14 @@ export const SORT_KEYS = [
 export type SortKey = (typeof SORT_KEYS)[number]
 export const DEFAULT_SORT: SortKey = 'count-asc'
 export const PAGE_SIZE = 9
+export const CATALOG_PATH = '/'
+
+export function catalogQuerySource(
+  path: string,
+  currentQuery: Record<string, unknown>,
+) {
+  return path === CATALOG_PATH ? { ...currentQuery } : {}
+}
 
 export function queryString(value: unknown) {
   if (typeof value === 'string') {

@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
+  CATALOG_PATH,
   DEFAULT_SORT,
   applyQueryUpdates,
+  catalogQuerySource,
   clampPage,
   parseAppliedSort,
   parseCategories,
@@ -77,6 +79,20 @@ describe("parseCategories", () => {
 
   it("trims tokens", () => {
     expect(parseCategories(" electronics ", allowed)).toEqual(["electronics"]);
+  });
+});
+
+describe("catalogQuerySource", () => {
+  it("keeps catalog query when already on the list", () => {
+    expect(
+      catalogQuerySource(CATALOG_PATH, { q: "hat", page: "2" }),
+    ).toEqual({ q: "hat", page: "2" });
+  });
+
+  it("starts empty when committing search from another route", () => {
+    expect(
+      catalogQuerySource("/products/1", { anything: "nope" }),
+    ).toEqual({});
   });
 });
 
