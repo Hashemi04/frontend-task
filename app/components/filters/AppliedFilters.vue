@@ -1,26 +1,26 @@
 <script setup lang="ts">
-import type { SortKey } from '~/composables/useProductFilters'
+import type { SortKey } from "~/composables/useProductFilters";
 
 defineProps<{
-  query: string
-  sort: SortKey | null
-  categories: string[]
-}>()
+  query: string;
+  sort: SortKey | null;
+  categories: string[];
+}>();
 
 const emit = defineEmits<{
-  clearSearch: []
-  clearSort: []
-  clearCategory: [category: string]
-}>()
+  clearSearch: [];
+  clearSort: [];
+  clearCategory: [category: string];
+}>();
 
 function sortLabel(sort: SortKey) {
-  return sort.startsWith('count') ? 'تعداد' : 'رتبه'
+  return sort.startsWith("count") ? "تعداد" : "رتبه";
 }
 </script>
 
 <template>
   <ul
-    class="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+    class="ms-auto flex min-w-0 items-center justify-end gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     aria-label="فیلترهای اعمال شده"
   >
     <li v-if="query" class="shrink-0">

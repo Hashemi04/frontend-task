@@ -103,7 +103,6 @@ useHead({
       />
 
       <div class="min-w-0 flex-1">
-        <h1 class="mb-3 text-lg font-bold lg:text-xl">لیست محصولات</h1>
         <div class="mb-5 flex items-center gap-2">
           <BaseButton
             class="shrink-0 lg:hidden"
@@ -121,15 +120,24 @@ useHead({
               {{ appliedCount.toLocaleString("fa-IR") }}
             </span>
           </BaseButton>
-          <AppliedFilters
-            v-if="hasAppliedFilters"
-            :query="query"
-            :sort="appliedSort"
-            :categories="selectedCategories"
-            @clear-search="setQuery('')"
-            @clear-sort="clearSort"
-            @clear-category="clearCategory"
-          />
+          <div
+            class="flex min-w-0 flex-1 items-center justify-between rounded-3xl bg-surface p-6 shadow-card"
+          >
+            <h1
+              class="shrink-0 text-right text-sm font-medium leading-4 text-heading"
+            >
+              {{ hasAppliedFilters ? "فیلترهای اعمال شده" : "لیست محصولات" }}
+            </h1>
+            <AppliedFilters
+              v-if="hasAppliedFilters"
+              :query="query"
+              :sort="appliedSort"
+              :categories="selectedCategories"
+              @clear-search="setQuery('')"
+              @clear-sort="clearSort"
+              @clear-category="clearCategory"
+            />
+          </div>
         </div>
         <div class="overflow-hidden">
           <!-- loading: catalog request in flight -->
