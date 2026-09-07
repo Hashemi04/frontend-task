@@ -1,17 +1,14 @@
 <script setup lang="ts">
 withDefaults(
   defineProps<{
-    as?: string
+    as?: string;
   }>(),
-  { as: 'div' },
-)
+  { as: "div" },
+);
 </script>
 
 <template>
-  <component
-    :is="as"
-    class="bg-surface rounded-card shadow-card overflow-hidden"
-  >
+  <component :is="as" class="bg-surface rounded-card overflow-hidden">
     <slot />
   </component>
 </template>

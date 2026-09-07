@@ -28,10 +28,12 @@ function formatCount(count: number) {
       aria-controls="category-options"
       @click="open = !open"
     >
-      <h2 class="text-base font-bold">دسته بندی</h2>
+      <h2 class="text-[13px] font-medium leading-none text-section-title">
+        دسته بندی
+      </h2>
       <IconChevron
         class="size-4 text-muted transition-transform duration-200"
-        :class="open ? '' : '-rotate-90'"
+        :class="open ? '' : 'rotate-90'"
       />
     </button>
 
