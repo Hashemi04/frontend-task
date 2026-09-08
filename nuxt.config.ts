@@ -1,39 +1,41 @@
-import './set-polyfill.mjs'
-import tailwindcss from '@tailwindcss/vite';
-import { fetchProductPrerenderRoutes } from './app/utils/catalogRoutes';
+import tailwindcss from "@tailwindcss/vite";
+import { fetchProductPrerenderRoutes } from "./build/catalog";
+import { resolveSiteUrl } from "./build/siteUrl";
+import { PAGE_SIZE } from "./app/utils/productQuery";
 
 const staticRoutes = [
-  '/',
-  '/consultation',
-  '/faq',
-  '/contact',
-  '/about',
-  '/blog',
-  '/after-sales',
-  '/terms',
-  '/feedback',
+  "/",
+  "/consultation",
+  "/faq",
+  "/contact",
+  "/about",
+  "/blog",
+  "/after-sales",
+  "/terms",
+  "/feedback",
 ];
 
 const longCache = {
   headers: {
-    'cache-control': 'public, max-age=31536000, immutable',
+    "cache-control": "public, max-age=31536000, immutable",
   },
 };
 
-const productRoutes = await fetchProductPrerenderRoutes();
+const siteUrl = resolveSiteUrl();
+const productRoutes = await fetchProductPrerenderRoutes(PAGE_SIZE);
 
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
+  compatibilityDate: "2025-07-15",
   devtools: { enabled: false },
   sourcemap: { client: false, server: false },
-  modules: ['@nuxt/eslint', '@nuxt/image'],
+  modules: ["@nuxt/eslint", "@nuxt/image"],
   runtimeConfig: {
     public: {
-      siteUrl: '',
+      siteUrl,
     },
   },
-  css: ['~/assets/css/main.css'],
-  components: [{ path: '~/components', pathPrefix: false }],
+  css: ["~/assets/css/main.css"],
+  components: [{ path: "~/components", pathPrefix: false }],
   experimental: {
     defaults: {
       nuxtLink: {
@@ -47,7 +49,7 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
     build: {
-      cssMinify: 'esbuild',
+      cssMinify: "esbuild",
     },
   },
   postcss: {
@@ -65,44 +67,44 @@ export default defineNuxtConfig({
     },
     providers: {
       catalog: {
-        name: 'catalog',
-        provider: '~/providers/catalog.ts',
+        name: "catalog",
+        provider: "~/providers/catalog.ts",
       },
     },
   },
   app: {
-    pageTransition: { name: 'page' },
+    pageTransition: { name: "page" },
     head: {
       htmlAttrs: {
-        lang: 'fa',
-        dir: 'rtl',
+        lang: "fa",
+        dir: "rtl",
       },
-      charset: 'utf-8',
-      viewport: 'width=device-width, initial-scale=1',
-      titleTemplate: '%s | فروشگاه',
+      charset: "utf-8",
+      viewport: "width=device-width, initial-scale=1",
+      titleTemplate: "%s | فروشگاه",
       meta: [
         {
-          name: 'description',
-          content: 'فهرست و جزئیات محصولات از فروشگاه آزمایشی Fake Store.',
+          name: "description",
+          content: "فهرست و جزئیات محصولات از فروشگاه آزمایشی Fake Store.",
         },
-        { name: 'theme-color', content: '#c2185b' },
+        { name: "theme-color", content: "#c2185b" },
       ],
       link: [
         {
-          rel: 'preload',
-          as: 'font',
-          type: 'font/woff2',
-          href: '/fonts/YekanBakhFaNum-Regular.woff2',
-          crossorigin: 'anonymous',
+          rel: "preload",
+          as: "font",
+          type: "font/woff2",
+          href: "/fonts/YekanBakhFaNum-Regular.woff2",
+          crossorigin: "anonymous",
         },
         {
-          rel: 'preload',
-          as: 'font',
-          type: 'font/woff2',
-          href: '/fonts/YekanBakhFaNum-Bold.woff2',
-          crossorigin: 'anonymous',
+          rel: "preload",
+          as: "font",
+          type: "font/woff2",
+          href: "/fonts/YekanBakhFaNum-Bold.woff2",
+          crossorigin: "anonymous",
         },
-        { rel: 'icon', href: '/favicon.ico' },
+        { rel: "icon", href: "/favicon.ico" },
       ],
     },
   },
@@ -110,20 +112,29 @@ export default defineNuxtConfig({
     compressPublicAssets: true,
     prerender: {
       crawlLinks: true,
-      routes: [...staticRoutes, ...productRoutes],
-      ignore: ['/images'],
+      routes: [
+        ...staticRoutes,
+        ...productRoutes,
+        "/sitemap.xml",
+        "/robots.txt",
+      ],
+      ignore: ["/images"],
     },
     routeRules: {
-      ...Object.fromEntries(staticRoutes.map((route) => [route, { prerender: true }])),
-      '/products/**': { prerender: true },
-      '/api/products': { swr: 600 },
-      '/api/products/**': { swr: 600 },
-      '/fonts/**': longCache,
-      '/images/**': longCache,
-      '/enamad.png': longCache,
-      '/samandehi.png': longCache,
-      '/favicon.ico': longCache,
-      '/_nuxt/**': longCache,
+      ...Object.fromEntries(
+        staticRoutes.map((route) => [route, { prerender: true }]),
+      ),
+      "/products/**": { prerender: true },
+      // Page 1 is `/`. Redirect rather than serve the same grid at two URLs.
+      "/page/1": { redirect: { to: "/", statusCode: 301 } },
+      "/api/products": { swr: 600 },
+      "/api/products/**": { swr: 600 },
+      "/fonts/**": longCache,
+      "/images/**": longCache,
+      "/enamad.png": longCache,
+      "/samandehi.png": longCache,
+      "/favicon.ico": longCache,
+      "/_nuxt/**": longCache,
     },
   },
 });

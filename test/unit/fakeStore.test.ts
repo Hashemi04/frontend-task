@@ -75,9 +75,9 @@ describe("isProductAvailable", () => {
 
 describe("catalogCategories", () => {
   it("keeps Fake Store order and drops names the catalog does not have", () => {
-    expect(
-      catalogCategories([{ ...valid, category: "jewelery" }]),
-    ).toEqual(["jewelery"]);
+    expect(catalogCategories([{ ...valid, category: "jewelery" }])).toEqual([
+      "jewelery",
+    ]);
   });
 
   it("keeps the full order when every known category is present", () => {

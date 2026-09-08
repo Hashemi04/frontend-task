@@ -2,14 +2,20 @@
   "name": "task",
   "type": "module",
   "private": true,
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "packageManager": "pnpm@10.14.0",
   "scripts": {
-    "build": "node scripts/generate-catalog-images.mjs && node --import ./set-polyfill.mjs ./node_modules/nuxt/bin/nuxt.mjs build",
+    "build": "node scripts/generate-catalog-images.mjs --strict && nuxt build",
     "dev": "node scripts/generate-catalog-images.mjs && nuxt dev",
-    "generate": "nuxt generate",
+    "generate": "node scripts/generate-catalog-images.mjs --strict && nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
-    "typecheck": "node --import ./set-polyfill.mjs ./node_modules/nuxt/bin/nuxt.mjs typecheck",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "nuxt typecheck",
     "test": "vitest run",
     "test:e2e": "playwright test"
   },
@@ -26,6 +32,8 @@
     "@nuxt/eslint": "^1.17.0",
     "@playwright/test": "^1.55.0",
     "eslint": "^10.10.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.6.2",
     "typescript": "5.9.3",
     "vitest": "^4.1.11",
     "vue-tsc": "^3.1.0"

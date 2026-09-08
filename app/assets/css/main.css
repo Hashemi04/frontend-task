@@ -3,7 +3,7 @@
 /* Values are eyeballed from the Figma screenshots and should be replaced
    with the exact tokens once sampled in Figma. */
 @theme {
-  --font-sans: 'Yekan Bakh', sans-serif;
+  --font-sans: "Yekan Bakh", sans-serif;
 
   --color-primary: #c2185b;
   --color-primary-soft: #fce4ec;
@@ -66,16 +66,16 @@ body {
 }
 
 @font-face {
-  font-family: 'Yekan Bakh';
-  src: url('/fonts/YekanBakhFaNum-Regular.woff2') format('woff2');
+  font-family: "Yekan Bakh";
+  src: url("/fonts/YekanBakhFaNum-Regular.woff2") format("woff2");
   font-weight: 400 500;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Yekan Bakh';
-  src: url('/fonts/YekanBakhFaNum-Bold.woff2') format('woff2');
+  font-family: "Yekan Bakh";
+  src: url("/fonts/YekanBakhFaNum-Bold.woff2") format("woff2");
   font-weight: 600 700;
   font-style: normal;
   font-display: swap;
@@ -122,7 +122,9 @@ body {
 }
 
 .sheet-snapping {
-  transition: height 200ms ease, border-radius 200ms ease;
+  transition:
+    height 200ms ease,
+    border-radius 200ms ease;
 }
 
 .sheet-top-enter-active .sheet-overlay,
@@ -146,7 +148,9 @@ body {
 }
 
 .page-enter-active {
-  transition: opacity 280ms ease-out, transform 280ms ease-out;
+  transition:
+    opacity 280ms ease-out,
+    transform 280ms ease-out;
 }
 
 .page-leave-active {
@@ -154,7 +158,9 @@ body {
   inset-inline: 0;
   top: 0;
   pointer-events: none;
-  transition: opacity 200ms ease-in, transform 200ms ease-in;
+  transition:
+    opacity 200ms ease-in,
+    transform 200ms ease-in;
 }
 
 .page-enter-from {
