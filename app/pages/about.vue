@@ -1,5 +1,6 @@
 <script setup lang="ts">
 usePageSeo({
+  robots: 'noindex, follow',
   title: 'درباره ما',
   description: 'آشنایی با فروشگاه و فعالیت‌های آن.',
 })

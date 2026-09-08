@@ -1,5 +1,6 @@
 <script setup lang="ts">
 usePageSeo({
+  robots: 'noindex, follow',
   title: 'سوالات متداول',
   description: 'پاسخ پرسش‌های رایج درباره محصولات، سفارش و ارسال.',
 })

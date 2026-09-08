@@ -1,5 +1,6 @@
 <script setup lang="ts">
 usePageSeo({
+  robots: 'noindex, follow',
   title: 'انتقادات و پیشنهادات',
   description: 'ارسال نظر و پیشنهاد درباره فروشگاه.',
 })

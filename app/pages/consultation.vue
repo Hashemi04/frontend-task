@@ -1,5 +1,6 @@
 <script setup lang="ts">
 usePageSeo({
+  robots: 'noindex, follow',
   title: "دریافت مشاوره",
   description: "برای انتخاب محصول مناسب از مشاوران فروشگاه راهنمایی بگیرید.",
 });

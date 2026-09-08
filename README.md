@@ -22,7 +22,9 @@ pnpm lint
 pnpm test
 ```
 
-`pnpm lint` uses the Nuxt ESLint flat config. `pnpm test` runs Vitest on catalog query helpers (sort defaults, page clamp, category parse, URL page reset).
+`pnpm lint` uses the Nuxt ESLint flat config. `pnpm test` runs Vitest on query, catalog-image, and JSON-LD helpers. `pnpm typecheck` runs `nuxt typecheck`. `pnpm test:e2e` is a Playwright path: search → URL → product → 404.
+
+Filters in the URL are the source of truth. `/` is prerendered as the default catalog; filtered query URLs canonicalize to `/` so they do not create duplicate index documents. Product routes are prerendered from the live Fake Store id list, not a hardcoded `1..20`. Placeholder marketing pages are `noindex`. The sitemap lists only `/` and product detail URLs. Set `NUXT_PUBLIC_SITE_URL` at build time so canonical, Open Graph, and sitemap URLs use the real origin.
 
 ## Routes
 
@@ -64,7 +66,7 @@ Price on detail: `fa-IR` digits + `دلار` (`app/utils/format.ts`).
 ## RTL and type
 
 - `html lang="fa" dir="rtl"`
-- Yekan Bakh (Persian digits) from jsDelivr
+- Self-hosted Yekan Bakh (Persian digits) in `public/fonts/`
 - Direction-aware chrome: start/end, sheet from the start edge, pagination reads right-to-left (page 1 on the right)
 
 Category labels stay in English because that is what Fake Store returns. Translating them would fake a locale the API does not have.
@@ -117,10 +119,13 @@ The assignment’s desktop frame does not specify these; they are implemented so
 
 ## Gaps (honest)
 
-- **Consult / FAQ / contact** are placeholders, not full pages.
+- **Consult / FAQ / contact / footer extras** are placeholders (`noindex`), not full pages.
 - Product cards do not show price (detail does).
-- JSON-LD `ItemList` lists the full fetched catalog, not the filtered page.
+
+## Images and SEO
+
+Product images go through `NuxtImg` and a catalog provider that points at build-generated `/images/p/{id}-{400|640|1000}.webp` files. `og:image` and Product JSON-LD use that same URL. ItemList JSON-LD is the visible page of results. Offer availability matches the odd-id stock stand-in in the UI.
 
 ## Stack
 
-Nuxt `^4.5`, Vue `^3.5`, Tailwind CSS `^4.3`, TypeScript. URL state in `app/composables/useProductFilters.ts`.
+Nuxt `^4.5`, Vue `^3.5`, Tailwind CSS `^4.3`, `@nuxt/image`, TypeScript. URL state in `app/composables/useProductFilters.ts`.

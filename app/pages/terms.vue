@@ -1,5 +1,6 @@
 <script setup lang="ts">
 usePageSeo({
+  robots: 'noindex, follow',
   title: 'قوانین و مقررات',
   description: 'قوانین استفاده از فروشگاه.',
 })
