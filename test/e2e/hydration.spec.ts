@@ -13,8 +13,7 @@ for (const path of ["/", "/page/2", "/products/1", "/faq"]) {
     });
 
     await page.goto(path);
-    await page.waitForLoadState("networkidle");
-    await page.waitForTimeout(500);
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 
     expect(problems).toEqual([]);
   });

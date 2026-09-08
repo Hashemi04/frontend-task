@@ -1,6 +1,7 @@
 import { defineConfig } from "@playwright/test";
 
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:3000";
+const preview = process.env.PLAYWRIGHT_PREVIEW === "1";
 
 export default defineConfig({
   testDir: "./test/e2e",
@@ -14,9 +15,9 @@ export default defineConfig({
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
     : {
-        command: "pnpm dev",
+        command: preview ? "node .output/server/index.mjs" : "pnpm dev",
         url: baseURL,
-        reuseExistingServer: true,
+        reuseExistingServer: !preview,
         timeout: 120_000,
       },
 });

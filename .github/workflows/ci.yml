@@ -38,4 +38,5 @@ jobs:
 
       - run: pnpm test:e2e
         env:
+          PLAYWRIGHT_PREVIEW: "1"
           NUXT_PUBLIC_SITE_URL: https://frontend-task-maz.vercel.app

@@ -88,6 +88,15 @@ test("filters reset pagination and land back on the clean catalog URL", async ({
     "href",
     /\/$/,
   );
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    "content",
+    /noindex/,
+  );
+});
+
+test("/page/1 redirects to the clean catalog URL", async ({ page }) => {
+  await page.goto("/page/1");
+  await expect(page).toHaveURL(/\/$/);
 });
 
 test("catalog exposes discoverable SEO surface", async ({ page }) => {
