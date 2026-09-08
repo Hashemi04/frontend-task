@@ -98,21 +98,35 @@ const appliedCount = computed(
     (available.value ? 1 : 0),
 );
 
+function preloadLcpImage(href: string, media: string) {
+  return {
+    rel: "preload" as const,
+    as: "image" as const,
+    type: "image/webp",
+    href,
+    media,
+    fetchPriority: "high" as const,
+  };
+}
+
 useHead(() => {
-  const lcp = pagedProducts.value[0];
+  const first = pagedProducts.value[0];
+  const mobileLcp = pagedProducts.value[1] ?? first;
 
   return {
-    link: lcp
-      ? [
-          {
-            rel: "preload",
-            as: "image",
-            type: "image/webp",
-            href: catalogImage(lcp.image, 400),
-            fetchPriority: "high",
-          },
-        ]
-      : [],
+    link: [
+      ...(first
+        ? [preloadLcpImage(catalogImage(first.image, 400, first.id), "(min-width: 768px)")]
+        : []),
+      ...(mobileLcp
+        ? [
+            preloadLcpImage(
+              catalogImage(mobileLcp.image, 400, mobileLcp.id),
+              "(max-width: 767px)",
+            ),
+          ]
+        : []),
+    ],
     script: catalog.value.length
       ? [
           {
@@ -218,7 +232,7 @@ useHead(() => {
           />
           <!-- ready: at least one product after filters -->
           <div v-else id="product-catalog" class="scroll-mt-32 md:scroll-mt-36">
-            <ProductGrid class="catalog-in" :products="pagedProducts" />
+            <ProductGrid :products="pagedProducts" />
             <ProductPagination
               v-if="totalPages > 1"
               :page="page"

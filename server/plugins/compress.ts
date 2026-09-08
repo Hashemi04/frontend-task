@@ -35,8 +35,10 @@ export default defineNitroPlugin((nitroApp) => {
       return;
     }
 
-    response.body = gzipSync(input);
+    const compressed = gzipSync(input);
+    response.body = compressed;
     setResponseHeader(event, "content-encoding", "gzip");
+    setResponseHeader(event, "content-length", compressed.byteLength);
     setResponseHeader(event, "vary", "Accept-Encoding");
   });
 });

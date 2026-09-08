@@ -59,7 +59,7 @@ useHead(() => ({
           rel: "preload",
           as: "image",
           type: "image/webp",
-          href: catalogImage(product.value.image, 640),
+          href: catalogImage(product.value.image, 640, product.value.id),
           fetchPriority: "high",
         },
       ]

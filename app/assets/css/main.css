@@ -5,7 +5,7 @@
 @theme {
   --font-sans: 'Yekan Bakh', sans-serif;
 
-  --color-primary: #e91e63;
+  --color-primary: #c2185b;
   --color-primary-soft: #fce4ec;
   --color-page: #eef1f6;
   --color-surface: #ffffff;
@@ -16,7 +16,7 @@
   --color-heading: #253343;
   --color-filter-item: #344456;
   --color-social: #f180a9;
-  --color-social-hover: #e20054;
+  --color-social-hover: #c2185b;
   --color-spec-value: #30445b;
   --color-spec-box: #f5f7fa;
 
@@ -162,17 +162,6 @@ body {
   transform: translateY(-24px);
 }
 
-@keyframes catalog-in {
-  from {
-    opacity: 0;
-    transform: translateY(-24px);
-  }
-}
-
-.catalog-in {
-  animation: none;
-}
-
 .page-leave-to {
   opacity: 0;
   transform: translateY(16px);
@@ -187,9 +176,5 @@ body {
   .page-enter-from,
   .page-leave-to {
     transform: none;
-  }
-
-  .catalog-in {
-    animation: none;
   }
 }
