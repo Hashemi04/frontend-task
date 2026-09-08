@@ -1,6 +1,6 @@
-import { FetchError } from 'ofetch'
 import type { Product } from '~/types/product'
 import { FAKE_STORE_PRODUCTS_URL, parseProduct } from '~/utils/fakeStore'
+import { isNotFoundError } from '~/utils/httpError'
 
 export default defineCachedEventHandler(
   async (event): Promise<Product> => {
@@ -18,7 +18,7 @@ export default defineCachedEventHandler(
       return product
     }
     catch (error) {
-      if (error instanceof FetchError && error.statusCode === 404) {
+      if (isNotFoundError(error)) {
         throw createError({ statusCode: 404, statusMessage: 'Not Found' })
       }
       throw error

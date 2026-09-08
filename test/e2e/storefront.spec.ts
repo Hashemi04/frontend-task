@@ -15,6 +15,6 @@ test("search writes the URL, product pages load, unknown ids 404", async ({
     page.getByRole("heading", { level: 1, name: /Fjallraven/ }),
   ).toBeVisible();
 
-  await page.goto("/products/99999");
+  await page.goto("/products/not-a-product");
   await expect(page.getByText("محصول پیدا نشد")).toBeVisible();
 });

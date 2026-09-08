@@ -4,14 +4,17 @@
   "private": true,
   "scripts": {
     "build": "node scripts/generate-catalog-images.mjs && node --import ./set-polyfill.mjs ./node_modules/nuxt/bin/nuxt.mjs build",
-    "dev": "nuxt dev",
+    "dev": "node scripts/generate-catalog-images.mjs && nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
-    "test": "vitest run"
+    "typecheck": "node --import ./set-polyfill.mjs ./node_modules/nuxt/bin/nuxt.mjs typecheck",
+    "test": "vitest run",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@nuxt/image": "^2.1.0",
     "@tailwindcss/vite": "^4.3.3",
     "nuxt": "^4.5.2",
     "sharp": "^0.35.4",
@@ -21,8 +24,10 @@
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.17.0",
+    "@playwright/test": "^1.55.0",
     "eslint": "^10.10.0",
     "typescript": "5.9.3",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.11",
+    "vue-tsc": "^3.1.0"
   }
 }

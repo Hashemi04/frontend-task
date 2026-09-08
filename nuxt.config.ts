@@ -1,5 +1,6 @@
 import './set-polyfill.mjs'
 import tailwindcss from '@tailwindcss/vite';
+import { fetchProductPrerenderRoutes } from './app/utils/catalogRoutes';
 
 const staticRoutes = [
   '/',
@@ -19,11 +20,18 @@ const longCache = {
   },
 };
 
+const productRoutes = await fetchProductPrerenderRoutes();
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
   sourcemap: { client: false, server: false },
-  modules: ['@nuxt/eslint'],
+  modules: ['@nuxt/eslint', '@nuxt/image'],
+  runtimeConfig: {
+    public: {
+      siteUrl: '',
+    },
+  },
   css: ['~/assets/css/main.css'],
   components: [{ path: '~/components', pathPrefix: false }],
   experimental: {
@@ -45,6 +53,21 @@ export default defineNuxtConfig({
   postcss: {
     plugins: {
       cssnano: false,
+    },
+  },
+  image: {
+    densities: [1],
+    screens: {
+      xs: 400,
+      sm: 640,
+      md: 768,
+      lg: 1024,
+    },
+    providers: {
+      catalog: {
+        name: 'catalog',
+        provider: '~/providers/catalog.ts',
+      },
     },
   },
   app: {
@@ -87,11 +110,8 @@ export default defineNuxtConfig({
     compressPublicAssets: true,
     prerender: {
       crawlLinks: true,
-      routes: [
-        ...staticRoutes,
-        ...Array.from({ length: 20 }, (_, index) => `/products/${index + 1}`),
-      ],
-      ignore: ['/img', '/images'],
+      routes: [...staticRoutes, ...productRoutes],
+      ignore: ['/images'],
     },
     routeRules: {
       ...Object.fromEntries(staticRoutes.map((route) => [route, { prerender: true }])),
@@ -103,7 +123,6 @@ export default defineNuxtConfig({
       '/enamad.png': longCache,
       '/samandehi.png': longCache,
       '/favicon.ico': longCache,
-      '/img**': longCache,
       '/_nuxt/**': longCache,
     },
   },
