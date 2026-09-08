@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { formatCount } from "~/utils/format";
 import { catalogCategories } from "~/utils/fakeStore";
-import { catalogPagePath } from "~/utils/productQuery";
+import {
+  catalogCanonicalPath,
+  catalogPagePath,
+  catalogRobots,
+} from "~/utils/productQuery";
 import { itemListJsonLd } from "~/utils/seo";
 
 const origin = useSiteOrigin();
@@ -49,30 +53,38 @@ usePageSeo({
     page.value > 1
       ? `صفحه ${formatCount(page.value)} از فهرست محصولات فروشگاه.`
       : "جستجو و مشاهده فهرست محصولات فروشگاه.",
-  // Each page self-canonicalises. Filter query strings are dropped so facets
-  // consolidate onto the clean catalog URL instead of duplicating it.
-  canonicalPath: () => catalogPagePath(page.value),
+  canonicalPath: () =>
+    catalogCanonicalPath(page.value, hasAppliedFilters.value),
+  robots: () => catalogRobots(hasAppliedFilters.value),
 });
 
 useHead(() => ({
   link: [
-    ...(page.value > 1
-      ? [
+    ...(hasAppliedFilters.value || page.value <= 1
+      ? []
+      : [
           {
             rel: "prev" as const,
             href: `${origin}${catalogPagePath(page.value - 1)}`,
           },
-        ]
-      : []),
-    ...(page.value < totalPages.value
-      ? [
+        ]),
+    ...(hasAppliedFilters.value || page.value >= totalPages.value
+      ? []
+      : [
           {
             rel: "next" as const,
             href: `${origin}${catalogPagePath(page.value + 1)}`,
           },
-        ]
-      : []),
+        ]),
   ],
+  script: pagedProducts.value.length
+    ? [
+        {
+          type: "application/ld+json",
+          textContent: itemListJsonLd(origin, pagedProducts.value),
+        },
+      ]
+    : [],
 }));
 
 type CatalogView = "loading" | "error" | "empty" | "ready";
@@ -111,17 +123,6 @@ const resultSummary = computed(() => {
 
   return `${formatCount(filteredProducts.value.length)} محصول یافت شد، صفحه ${formatCount(page.value)} از ${formatCount(totalPages.value)}`;
 });
-
-useHead(() => ({
-  script: pagedProducts.value.length
-    ? [
-        {
-          type: "application/ld+json",
-          textContent: itemListJsonLd(origin, pagedProducts.value),
-        },
-      ]
-    : [],
-}));
 </script>
 
 <template>
@@ -150,12 +151,7 @@ useHead(() => ({
             class="flex h-11 min-w-0 flex-1 items-center justify-between gap-3 overflow-hidden rounded-2xl bg-surface px-4 shadow-card lg:h-16 lg:rounded-3xl lg:px-6"
           >
             <h1 class="shrink-0 text-sm font-medium leading-4 text-heading">
-              <span :class="hasAppliedFilters ? 'lg:hidden' : undefined">
-                لیست محصولات
-              </span>
-              <span v-if="hasAppliedFilters" class="hidden lg:inline">
-                فیلترهای اعمال شده
-              </span>
+              لیست محصولات
             </h1>
             <AppliedFilters
               v-if="hasAppliedFilters"

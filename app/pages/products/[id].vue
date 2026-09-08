@@ -40,20 +40,10 @@ const origin = useSiteOrigin();
 usePageSeo({
   title: () => product.value?.title ?? "محصول",
   description: () => (product.value?.description ?? "").slice(0, 160),
+  ogType: "product",
   ogImage: () =>
     product.value ? catalogImageUrl(origin, product.value.id, 640) : undefined,
 });
-
-onMounted(() => {
-  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-});
-
-watch(
-  () => route.params.id,
-  () => {
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-  },
-);
 
 useHead(() => ({
   script: product.value

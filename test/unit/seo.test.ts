@@ -54,7 +54,10 @@ describe("itemListJsonLd", () => {
 describe("productJsonLd", () => {
   it("uses the same-origin catalog image and UI availability", () => {
     const json = productJsonLd("https://shop.test", product, false);
-    expect(json.image).toBe("https://shop.test/images/p/2-640.webp");
+    expect(json.image).toEqual([
+      "https://shop.test/images/p/2-640.webp",
+      "https://fakestoreapi.com/img/bag.png",
+    ]);
     expect(json.offers.availability).toBe("https://schema.org/OutOfStock");
     expect(json.offers.url).toBe("https://shop.test/products/2");
   });

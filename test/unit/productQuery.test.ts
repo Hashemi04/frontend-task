@@ -4,9 +4,12 @@ import {
   DEFAULT_SORT,
   appliedFilterCount,
   applyQueryUpdates,
+  catalogCanonicalPath,
   catalogPagePath,
   catalogQuerySource,
+  catalogRobots,
   clampPage,
+  isCatalogPageParam,
   isCatalogPath,
   parseAppliedSort,
   parseAvailable,
@@ -119,6 +122,33 @@ describe("catalogPagePath", () => {
   it("puts later pages in the path so they are crawlable", () => {
     expect(catalogPagePath(2)).toBe("/page/2");
     expect(catalogPagePath(13)).toBe("/page/13");
+  });
+});
+
+describe("catalogCanonicalPath / catalogRobots", () => {
+  it("self-canonicalises clean paginated URLs", () => {
+    expect(catalogCanonicalPath(1, false)).toBe("/");
+    expect(catalogCanonicalPath(2, false)).toBe("/page/2");
+    expect(catalogRobots(false)).toBeUndefined();
+  });
+
+  it("sends filtered views to / with noindex, follow", () => {
+    expect(catalogCanonicalPath(2, true)).toBe("/");
+    expect(catalogCanonicalPath(1, true)).toBe("/");
+    expect(catalogRobots(true)).toBe("noindex, follow");
+  });
+});
+
+describe("isCatalogPageParam", () => {
+  it("accepts 1-based integers without leading zeros", () => {
+    expect(isCatalogPageParam("1")).toBe(true);
+    expect(isCatalogPageParam("12")).toBe(true);
+  });
+
+  it("rejects junk", () => {
+    expect(isCatalogPageParam("01")).toBe(false);
+    expect(isCatalogPageParam("0")).toBe(false);
+    expect(isCatalogPageParam("abc")).toBe(false);
   });
 });
 

@@ -1,5 +1,5 @@
-// Relative, not aliased: this module is also imported by `nuxt.config.ts`
-// (for PAGE_SIZE) where the `~` alias does not exist yet.
+// Relative import: this module is also loaded from `nuxt.config.ts` tests
+// via the prerender suite. Do not pull Vue or `~` aliases in here.
 import type { Product } from "../types/product";
 
 export const SORT_KEYS = [
@@ -26,6 +26,23 @@ export function isCatalogPath(path: string) {
 
 export function catalogPagePath(page: number) {
   return page > 1 ? `/page/${page}` : CATALOG_PATH;
+}
+
+/**
+ * Filtered URLs are useful for users and must not compete with the clean
+ * catalog in the index. They canonicalise to `/` and stay `noindex, follow`.
+ */
+export function catalogCanonicalPath(page: number, hasFilters: boolean) {
+  return hasFilters ? CATALOG_PATH : catalogPagePath(page);
+}
+
+export function catalogRobots(hasFilters: boolean) {
+  return hasFilters ? "noindex, follow" : undefined;
+}
+
+export function isCatalogPageParam(value: unknown) {
+  const raw = typeof value === "string" ? value : queryString(value);
+  return /^[1-9]\d*$/.test(raw);
 }
 
 export function catalogQuerySource(

@@ -42,12 +42,12 @@ Canonical, `og:url`, sitemap and JSON-LD URLs are baked into prerendered HTML. B
 
 ### Upstream failures
 
-Fake Store is a free demo API that rate-limits and 502s. Product **data** falls back to `data/catalog.json`. Product **images** are generated at `dev`/`build` into `public/images/` (gitignored) — they are a build artifact, not source.
+Fake Store is a free demo API that rate-limits and 502s. Product **data** falls back to `data/catalog.json`. Product **images** are generated at `dev`/`build` into `public/images/` (gitignored) — they are a build artifact, not source. A missing local file does not fail the build: the `<img>` and JSON-LD `image` array fall back to the Fake Store URL.
 
 | Consumer                                                 | On upstream failure                                         |
 | -------------------------------------------------------- | ----------------------------------------------------------- |
 | Prerender route list (`build/catalog.ts`)                | Warns, uses the fixture                                     |
-| Image generation (`scripts/generate-catalog-images.mjs`) | Warns; missing files fail `--strict` builds                 |
+| Image generation (`scripts/generate-catalog-images.mjs`) | Warns; build continues; UI/JSON-LD use the remote URL       |
 | `/api/products`, `/api/products/:id`                     | Warns, serves the fixture, sets `x-catalog-source: fixture` |
 
 A genuine upstream `404` is still a `404` — only network and 5xx failures fall back.
@@ -93,9 +93,9 @@ List page size is **9**. Pagination is hidden when the filtered set fits on one 
 
 ## SEO
 
-- **Pagination is navigable.** `<a href="/page/2">`, not a click handler: middle-clickable, shareable, crawlable, prerendered. Each page self-canonicalises and carries `rel="prev"` / `rel="next"`, with its own `<title>`.
-- **Facets consolidate.** Filter query strings are dropped from the canonical, so `/page/2?q=jacket` canonicalises to `/page/2` instead of minting duplicate documents.
-- **Structured data.** `Product` + `Offer` + `AggregateRating` + `BreadcrumbList` on detail pages; `ItemList` of the visible page (with prices) on the catalog.
+- **Pagination is navigable.** `<a href="/page/2">`, not a click handler: middle-clickable, shareable, crawlable, prerendered. Clean pages self-canonicalise and carry `rel="prev"` / `rel="next"`, with their own `<title>`.
+- **Facets stay out of the index.** Any URL with `q`, `sort`, `categories`, or `available` is `noindex, follow` and canonicalises to `/`. `/page/2?q=jacket` must not claim it is `/page/2`.
+- **Structured data.** `Product` + `Offer` + `AggregateRating` + `BreadcrumbList` on detail pages (`og:type=product`); `ItemList` of the visible page (with prices) on the catalog. `image` is `[same-origin webp, Fake Store source]` so a missed generate still has a crawlable URL.
 - **Social.** `og:*` and `twitter:card` on every page, with `public/og-default.png` as the fallback image (regenerate with `node scripts/generate-og-image.mjs`).
 - **Sitemap** lists `/`, every `/page/:n`, and every product URL with `lastmod` / `changefreq` / `priority`. Placeholder marketing pages are `noindex, follow` and stay out of it.
 

@@ -7,11 +7,11 @@ const SITE_NAME = "فروشگاه";
 export function usePageSeo(options: {
   title: MaybeRefOrGetter<string>;
   description: MaybeRefOrGetter<string>;
-  /** Absolute-from-root path used for canonical and og:url. Defaults to the
-   *  current path, which deliberately drops filter query strings so facets do
-   *  not compete with the clean catalog URL. */
+  /** Path used for canonical and og:url. Filter query strings are never
+   *  part of this — filtered views canonicalise to `/` and are noindexed. */
   canonicalPath?: MaybeRefOrGetter<string>;
   ogImage?: MaybeRefOrGetter<string | undefined>;
+  ogType?: MaybeRefOrGetter<"website" | "product">;
   robots?: MaybeRefOrGetter<string | undefined>;
 }) {
   const origin = useSiteOrigin();
@@ -32,7 +32,6 @@ export function usePageSeo(options: {
     ogSiteName: SITE_NAME,
     ogLocale: "fa_IR",
     ogUrl: () => canonical.value,
-    ogType: "website",
     ogImage: () => image.value,
     ogImageAlt: () => toValue(options.title),
     twitterCard: "summary_large_image",
@@ -43,6 +42,12 @@ export function usePageSeo(options: {
   });
 
   useHead({
+    meta: () => [
+      {
+        property: "og:type",
+        content: toValue(options.ogType) ?? "website",
+      },
+    ],
     link: () => [{ rel: "canonical", href: canonical.value }],
   });
 }
