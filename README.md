@@ -40,17 +40,17 @@ pnpm preview
 
 Canonical, `og:url`, sitemap and JSON-LD URLs are baked into prerendered HTML. Building without an origin would publish `http://localhost:3000` as this site's canonical origin, so the build **fails loudly** instead (`build/siteUrl.ts`). On Vercel, `VERCEL_PROJECT_PRODUCTION_URL` is picked up automatically. In dev the origin is `http://localhost:3000`.
 
-### Working offline
+### Upstream failures
 
-`data/catalog.json` is a committed snapshot of the Fake Store catalog, and the generated product images in `public/images/p/` are committed too. Fake Store is a free demo API that rate-limits and 502s, so nothing is allowed to fail on it:
+Fake Store is a free demo API that rate-limits and 502s. Product **data** falls back to `data/catalog.json`. Product **images** are generated at `dev`/`build` into `public/images/` (gitignored) — they are a build artifact, not source.
 
 | Consumer                                                 | On upstream failure                                         |
 | -------------------------------------------------------- | ----------------------------------------------------------- |
 | Prerender route list (`build/catalog.ts`)                | Warns, uses the fixture                                     |
-| Image generation (`scripts/generate-catalog-images.mjs`) | Warns, uses the fixture; images already exist               |
+| Image generation (`scripts/generate-catalog-images.mjs`) | Warns; missing files fail `--strict` builds                 |
 | `/api/products`, `/api/products/:id`                     | Warns, serves the fixture, sets `x-catalog-source: fixture` |
 
-A clean clone builds and runs with the network cut. A genuine upstream `404` is still a `404` — only network and 5xx failures fall back.
+A genuine upstream `404` is still a `404` — only network and 5xx failures fall back.
 
 ## Routes
 
