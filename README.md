@@ -1,14 +1,17 @@
 # فروشگاه — frontend take-home
 
-RTL Persian storefront: product list with URL filters, pagination, and a product detail page. Built with Nuxt 4, Vue 3, TypeScript, and Tailwind CSS v4.
+RTL Persian storefront: product list with URL-driven filters, crawlable pagination, and a product detail page. Built with Nuxt 4, Vue 3, TypeScript, and Tailwind CSS v4.
+
+Live: <https://frontend-task-maz.vercel.app/>
 
 Desktop layout follows the given mock as the visual contract. Fake Store is the data contract: English category names, real titles, and the `{ id, title, price, description, category, image, rating }` shape.
 
 ## Run
 
-Node 20+ and [pnpm](https://pnpm.io) (lockfile is `pnpm-lock.yaml`).
+Node **22+** (`.nvmrc`) and [pnpm](https://pnpm.io) (lockfile is `pnpm-lock.yaml`).
 
 ```bash
+nvm use
 pnpm install
 pnpm dev
 ```
@@ -16,52 +19,90 @@ pnpm dev
 App: [http://localhost:3000](http://localhost:3000)
 
 ```bash
-pnpm build
-pnpm preview
-pnpm lint
-pnpm test
+pnpm lint          # ESLint (Nuxt flat config)
+pnpm format        # Prettier write
+pnpm format:check  # Prettier verify (what CI runs)
+pnpm typecheck     # nuxt typecheck
+pnpm test          # Vitest — filters, pagination, query parsing, JSON-LD, fixtures
+pnpm test:e2e      # Playwright — search, pagination URLs, 404, robots/sitemap
 ```
 
-`pnpm lint` uses the Nuxt ESLint flat config. `pnpm test` runs Vitest on query, catalog-image, and JSON-LD helpers. `pnpm typecheck` runs `nuxt typecheck`. `pnpm test:e2e` is a Playwright path: search → URL → product → 404.
+`.github/workflows/ci.yml` runs all of the above plus a production build on every push.
 
-Filters in the URL are the source of truth. `/` is prerendered as the default catalog; filtered query URLs canonicalize to `/` so they do not create duplicate index documents. Product routes are prerendered from the live Fake Store id list, not a hardcoded `1..20`. Placeholder marketing pages are `noindex`. The sitemap lists only `/` and product detail URLs. Set `NUXT_PUBLIC_SITE_URL` at build time so canonical, Open Graph, and sitemap URLs use the real origin.
+### Building for production
+
+The build **requires** an origin:
+
+```bash
+NUXT_PUBLIC_SITE_URL=https://frontend-task-maz.vercel.app pnpm build
+pnpm preview
+```
+
+Canonical, `og:url`, sitemap and JSON-LD URLs are baked into prerendered HTML. Building without an origin would publish `http://localhost:3000` as this site's canonical origin, so the build **fails loudly** instead (`build/siteUrl.ts`). On Vercel, `VERCEL_PROJECT_PRODUCTION_URL` is picked up automatically. In dev the origin is `http://localhost:3000`.
+
+### Working offline
+
+`data/catalog.json` is a committed snapshot of the Fake Store catalog, and the generated product images in `public/images/p/` are committed too. Fake Store is a free demo API that rate-limits and 502s, so nothing is allowed to fail on it:
+
+| Consumer                                                 | On upstream failure                                         |
+| -------------------------------------------------------- | ----------------------------------------------------------- |
+| Prerender route list (`build/catalog.ts`)                | Warns, uses the fixture                                     |
+| Image generation (`scripts/generate-catalog-images.mjs`) | Warns, uses the fixture; images already exist               |
+| `/api/products`, `/api/products/:id`                     | Warns, serves the fixture, sets `x-catalog-source: fixture` |
+
+A clean clone builds and runs with the network cut. A genuine upstream `404` is still a `404` — only network and 5xx failures fall back.
 
 ## Routes
 
-| Path | What you get |
-| --- | --- |
-| `/` | Catalog: search, sort, categories, pagination |
-| `/products/:id` | Detail: image, price, category, rating, description |
-| `/consultation`, `/faq`, `/contact` | Real routes, placeholder copy |
-| `/about`, `/blog`, `/after-sales`, `/terms`, `/feedback` | Footer placeholders, same pattern as FAQ |
-| anything else / unknown product id | `error.vue` — 404 as empty, other failures as error |
+| Path                                                     | What you get                                                                  |
+| -------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `/`                                                      | Catalog page 1: search, sort, categories, availability, pagination            |
+| `/page/:n`                                               | Catalog page _n_. Real prerendered route, self-canonical. `/page/1` → `301 /` |
+| `/products/:id`                                          | Detail: image, price, category, rating, description                           |
+| `/consultation`, `/faq`, `/contact`                      | Real routes, placeholder copy                                                 |
+| `/about`, `/blog`, `/after-sales`, `/terms`, `/feedback` | Footer placeholders, same pattern as FAQ                                      |
+| `/sitemap.xml`, `/robots.txt`                            | Prerendered, origin-aware                                                     |
+| anything else / unknown product id                       | `error.vue` — 404 as empty, other failures as error                           |
 
 Unknown or non-integer `id` throws `createError({ statusCode: 404, fatal: true })`. «بازگشت به فهرست» on that screen uses `clearError({ redirect: '/' })`.
 
 ## Data
 
-Catalog: `GET https://fakestoreapi.com/products`. Detail: `GET https://fakestoreapi.com/products/:id`. Both go through `useAsyncData` (`products`, `product-${id}`) and `$fetch`. Filters still run on the client after the list fetch. Retry calls `refresh()`. Fake Store has no stock field; `available=1` keeps odd product ids as a stand-in for «محصولات موجود».
+Catalog: `GET /api/products`. Detail: `GET /api/products/:id`. Both server routes proxy Fake Store behind a 10-minute SWR cache and the fixture fallback above. The client reaches them through `useAsyncData` (`products`, `product-${id}`). Filters run on the client after the list fetch. Retry calls `refresh()`.
 
-A missing or garbage id is `createError({ statusCode: 404, fatal: true })`. Network / 5xx stays on the page (`status="error"` + retry), not a 404.
+Network / 5xx stays on the page (`status="error"` + retry), not a 404.
 
-Price on detail: `fa-IR` digits + `دلار` (`app/utils/format.ts`).
+Price: `fa-IR` digits + `دلار` (`app/utils/format.ts`), on both the card and the detail row.
 
-## Query params
+## URL state
 
-Filters live in the URL. No Pinia. Shareable, back-button friendly. Changing search, sort, or category drops `page`.
+Filters live in the query string, pagination lives in the path. No Pinia. Shareable, back-button friendly, crawlable.
 
-| Param | Example | Meaning |
-| --- | --- | --- |
-| `q` | `?q=jacket` | Case-insensitive match on **title** |
-| `sort` | `?sort=rating-desc` | `count-asc` \| `count-desc` \| `rating-asc` \| `rating-desc` |
-| `categories` | `?categories=electronics,jewelery` | Comma-separated Fake Store names; unknown tokens ignored |
-| `page` | `?page=2` | 1-based. Page 1 omits the param. Out of range clamps |
+| Param        | Example                            | Meaning                                                      |
+| ------------ | ---------------------------------- | ------------------------------------------------------------ |
+| `q`          | `?q=jacket`                        | Case-insensitive match on **title**                          |
+| `sort`       | `?sort=rating-desc`                | `count-asc` \| `count-desc` \| `rating-asc` \| `rating-desc` |
+| `categories` | `?categories=electronics,jewelery` | Comma-separated Fake Store names; unknown tokens ignored     |
+| _(path)_     | `/page/2?q=jacket`                 | 1-based. Page 1 is `/`. Past the end clamps to the last page |
 
 Default sort with **no** `sort` param is `count-asc`. That implicit default is **not** an applied chip. Selecting a sort in the UI writes `sort` and shows a chip.
 
-List page size is **9**. Pagination is hidden when the filtered set fits on one page.
+Changing search, sort, category or availability navigates back to `/` — a narrower result set should never leave you on a page that no longer exists.
 
-Price on detail: `fa-IR` digits + `دلار` (`app/utils/format.ts`).
+List page size is **9**. Pagination is hidden when the filtered set fits on one page. The page-size constant is shared between the app and the prerenderer, and a unit test keeps the two in sync.
+
+## SEO
+
+- **Pagination is navigable.** `<a href="/page/2">`, not a click handler: middle-clickable, shareable, crawlable, prerendered. Each page self-canonicalises and carries `rel="prev"` / `rel="next"`, with its own `<title>`.
+- **Facets consolidate.** Filter query strings are dropped from the canonical, so `/page/2?q=jacket` canonicalises to `/page/2` instead of minting duplicate documents.
+- **Structured data.** `Product` + `Offer` + `AggregateRating` + `BreadcrumbList` on detail pages; `ItemList` of the visible page (with prices) on the catalog.
+- **Social.** `og:*` and `twitter:card` on every page, with `public/og-default.png` as the fallback image (regenerate with `node scripts/generate-og-image.mjs`).
+- **Sitemap** lists `/`, every `/page/:n`, and every product URL with `lastmod` / `changefreq` / `priority`. Placeholder marketing pages are `noindex, follow` and stay out of it.
+
+Two deliberate omissions in the structured data, because Fake Store does not carry the underlying facts:
+
+- **No `brand`.** There is no brand field in the source data, and inventing one would put an unsupported claim in machine-readable markup.
+- **`availability` is a stand-in.** Fake Store has no stock field, so odd product ids are treated as in stock. It keeps the «محصولات موجود» filter and `schema.org/InStock` consistent with each other, but against a real catalogue this would be a merchant policy violation — it is demo behaviour, not shippable behaviour.
 
 ## RTL and type
 
@@ -79,6 +120,13 @@ Category labels stay in English because that is what Fake Store returns. Transla
 
 The bottom sheet is expandable (drag the handle). Device back closes overlays without undoing a `replace` that happened while the sheet was open (filters applied inside it).
 
+## Accessibility
+
+- Focus trap and `Escape` on the filter sheet, search overlay, and image zoom
+- Result count announced through a polite live region when filters change
+- `aria-current="page"` on the current pagination page; disabled steps are not focusable
+- Loading and error states carry `role="status"` / `role="alert"` and `aria-busy`
+
 ## Design decisions
 
 ### Compact header
@@ -95,7 +143,7 @@ The title / applied-filters pill stays under the header while the grid scrolls, 
 
 ### Pagination chrome
 
-Mobile: prev / next and «صفحه ۱ از ۳». Tablet and desktop: numbered pills, current page in primary.
+Mobile: prev / next and «صفحه ۱ از ۳». Tablet and desktop: numbered pills, current page in primary. Changing page scrolls the first card of the new page under the toolbar rather than jumping to the top of the document (`app/router.options.ts`), and respects `prefers-reduced-motion`.
 
 ### Detail specs: label and value in one box
 
@@ -103,16 +151,16 @@ The product mock paints each spec as **two** gray chips (label tile, then value 
 
 Detail keeps **one** rounded row per field: label on the start edge, value on the end. You read it as a key–value, the way a spec sheet works, without a second box competing for the same line. Description stays in that same tile — label above, body below — because a Fake Store paragraph cannot sit on one line next to «توضیحات» without colliding with the label.
 
-The mock’s تومان figures and Persian dummy names stay on the artboard. The row still shows API English categories and `formatPrice` + دلار.
+The mock's تومان figures and Persian dummy names stay on the artboard. The row still shows API English categories and `formatPrice` + دلار.
 
 ## What is invented (not in the desktop mock)
 
-The assignment’s desktop frame does not specify these; they are implemented so the storefront works as a product:
+The assignment's desktop frame does not specify these; they are implemented so the storefront works as a product:
 
 - Mobile/tablet filter sheet and header search overlay
 - Applied-filter chips and clear actions
 - Pagination
-- Loading skeletons and in-page error + retry (wired to Fake Store)
+- Loading skeletons and in-page error + retry
 - 404 vs in-page error
 - Extra nav pages as placeholders
 - Page enter from the top; list page keeps the grid animation only so filters do not slide
@@ -120,12 +168,21 @@ The assignment’s desktop frame does not specify these; they are implemented so
 ## Gaps (honest)
 
 - **Consult / FAQ / contact / footer extras** are placeholders (`noindex`), not full pages.
-- Product cards do not show price (detail does).
+- **Filtering is client-side.** Fine for a 20-product catalog; a real one needs server-side filtering, and the filtered result sets are not prerendered.
+- **No component-level tests.** The catalog logic is extracted into pure functions (`filterProducts`, `paginate`) and unit tested; rendering is covered end-to-end instead of with a component test runner.
 
-## Images and SEO
+## Layout of the code
 
-Product images go through `NuxtImg` and a catalog provider that points at build-generated `/images/p/{id}-{400|640|1000}.webp` files. `og:image` and Product JSON-LD use that same URL. ItemList JSON-LD is the visible page of results. Offer availability matches the odd-id stock stand-in in the UI.
+```
+app/          Vue app — pages, components, composables, pure utils
+build/        Build-time only: prerender route list, origin resolution
+data/         Committed Fake Store snapshot used as the offline fallback
+scripts/      Image + social-card generation
+server/       Nitro API proxy, sitemap, robots
+test/unit     Vitest over pure functions
+test/e2e      Playwright over the built app
+```
 
 ## Stack
 
-Nuxt `^4.5`, Vue `^3.5`, Tailwind CSS `^4.3`, `@nuxt/image`, TypeScript. URL state in `app/composables/useProductFilters.ts`.
+Nuxt `^4.5`, Vue `^3.5`, Tailwind CSS `^4.3`, `@nuxt/image`, TypeScript. URL state in `app/composables/useProductFilters.ts`, catalog view in `app/components/catalog/CatalogView.vue`.
