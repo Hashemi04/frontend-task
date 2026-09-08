@@ -23,7 +23,10 @@ logs
 .env.*
 !.env.example
 .vercel
-public/images
+
+# Generated catalog images are committed on purpose: a clean clone must build
+# and run without reaching Fake Store. See scripts/generate-catalog-images.mjs.
+
 /test-results/
 /playwright-report/
 /blob-report/

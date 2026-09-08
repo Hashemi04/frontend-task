@@ -1,9 +1,19 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+/**
+ * The catalog is prerendered, so its markup is interactive-looking before Vue
+ * has attached listeners. Clicks fired in that window are silently lost, so
+ * every test waits for hydration before interacting.
+ */
+async function gotoHydrated(page: Page, path: string) {
+  await page.goto(path);
+  await page.waitForLoadState("networkidle");
+}
 
 test("search writes the URL, product pages load, unknown ids 404", async ({
   page,
 }) => {
-  await page.goto("/");
+  await gotoHydrated(page, "/");
   const search = page.getByLabel("جستجوی محصول");
   await search.fill("backpack");
   await search.press("Enter");
@@ -17,4 +27,77 @@ test("search writes the URL, product pages load, unknown ids 404", async ({
 
   await page.goto("/products/not-a-product");
   await expect(page.getByText("محصول پیدا نشد")).toBeVisible();
+});
+
+test("pagination is real links with self-canonical paginated URLs", async ({
+  page,
+}) => {
+  await gotoHydrated(page, "/");
+
+  const pagination = page.getByRole("navigation", {
+    name: "صفحه‌بندی محصولات",
+  });
+  const secondPage = pagination.getByRole("link", { name: "صفحه ۲" });
+
+  // A link, not a button: middle-clickable, crawlable, shareable.
+  await expect(secondPage).toHaveAttribute("href", "/page/2");
+
+  const firstProductOnPageOne = await page
+    .locator("article[id^='product-card-']")
+    .first()
+    .getAttribute("id");
+
+  await secondPage.click();
+  await expect(page).toHaveURL(/\/page\/2$/);
+
+  const firstProductOnPageTwo = await page
+    .locator("article[id^='product-card-']")
+    .first()
+    .getAttribute("id");
+  expect(firstProductOnPageTwo).not.toBe(firstProductOnPageOne);
+
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    /\/page\/2$/,
+  );
+  await expect(page.locator('link[rel="prev"]')).toHaveCount(1);
+});
+
+test("a paginated URL loads directly and past-the-end clamps", async ({
+  page,
+}) => {
+  await gotoHydrated(page, "/page/3");
+  await expect(page).toHaveURL(/\/page\/3$/);
+  await expect(
+    page.locator("article[id^='product-card-']").first(),
+  ).toBeVisible();
+
+  await gotoHydrated(page, "/page/99");
+  await expect(page).toHaveURL(/\/page\/3$/);
+});
+
+test("filters reset pagination and land back on the clean catalog URL", async ({
+  page,
+}) => {
+  await gotoHydrated(page, "/page/2");
+
+  await page.getByRole("checkbox", { name: /jewelery/ }).check();
+
+  await expect(page).toHaveURL(/\/\?categories=jewelery$/);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    /\/$/,
+  );
+});
+
+test("catalog exposes discoverable SEO surface", async ({ page }) => {
+  const robots = await page.request.get("/robots.txt");
+  expect(robots.ok()).toBeTruthy();
+  expect(await robots.text()).toContain("Sitemap:");
+
+  const sitemap = await page.request.get("/sitemap.xml");
+  expect(sitemap.ok()).toBeTruthy();
+  const xml = await sitemap.text();
+  expect(xml).toContain("/products/1<");
+  expect(xml).toContain("/page/2<");
 });

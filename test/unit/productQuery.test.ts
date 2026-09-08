@@ -4,8 +4,10 @@ import {
   DEFAULT_SORT,
   appliedFilterCount,
   applyQueryUpdates,
+  catalogPagePath,
   catalogQuerySource,
   clampPage,
+  isCatalogPath,
   parseAppliedSort,
   parseAvailable,
   parseCategories,
@@ -83,9 +85,10 @@ describe("parseCategories", () => {
   });
 
   it("keeps known names and drops the rest", () => {
-    expect(
-      parseCategories("electronics, junk, jewelery", allowed),
-    ).toEqual(["electronics", "jewelery"]);
+    expect(parseCategories("electronics, junk, jewelery", allowed)).toEqual([
+      "electronics",
+      "jewelery",
+    ]);
   });
 
   it("trims tokens", () => {
@@ -93,37 +96,72 @@ describe("parseCategories", () => {
   });
 });
 
+describe("isCatalogPath", () => {
+  it("accepts the catalog root and its paginated routes", () => {
+    expect(isCatalogPath("/")).toBe(true);
+    expect(isCatalogPath("/page/2")).toBe(true);
+    expect(isCatalogPath("/page/12/")).toBe(true);
+  });
+
+  it("rejects anything else", () => {
+    expect(isCatalogPath("/products/1")).toBe(false);
+    expect(isCatalogPath("/page/abc")).toBe(false);
+    expect(isCatalogPath("/pages/2")).toBe(false);
+  });
+});
+
+describe("catalogPagePath", () => {
+  it("keeps page 1 on the clean catalog URL", () => {
+    expect(catalogPagePath(1)).toBe(CATALOG_PATH);
+    expect(catalogPagePath(0)).toBe(CATALOG_PATH);
+  });
+
+  it("puts later pages in the path so they are crawlable", () => {
+    expect(catalogPagePath(2)).toBe("/page/2");
+    expect(catalogPagePath(13)).toBe("/page/13");
+  });
+});
+
 describe("catalogQuerySource", () => {
   it("keeps catalog query when already on the list", () => {
-    expect(
-      catalogQuerySource(CATALOG_PATH, { q: "hat", page: "2" }),
-    ).toEqual({ q: "hat", page: "2" });
+    expect(catalogQuerySource(CATALOG_PATH, { q: "hat" })).toEqual({
+      q: "hat",
+    });
+  });
+
+  it("keeps catalog query when on a paginated catalog route", () => {
+    expect(catalogQuerySource("/page/3", { q: "hat" })).toEqual({ q: "hat" });
   });
 
   it("starts empty when committing search from another route", () => {
-    expect(
-      catalogQuerySource("/products/1", { anything: "nope" }),
-    ).toEqual({});
+    expect(catalogQuerySource("/products/1", { anything: "nope" })).toEqual({});
   });
 });
 
 describe("applyQueryUpdates", () => {
-  it("drops page when a filter changes", () => {
-    expect(
-      applyQueryUpdates({ q: "hat", page: "3" }, { q: "jacket" }),
-    ).toEqual({ q: "jacket" });
+  it("merges a new filter over the current query", () => {
+    expect(applyQueryUpdates({ q: "hat" }, { sort: "rating-desc" })).toEqual({
+      q: "hat",
+      sort: "rating-desc",
+    });
   });
 
-  it("keeps page when the update is the page itself", () => {
-    expect(
-      applyQueryUpdates({ q: "hat", page: "1" }, { page: "2" }),
-    ).toEqual({ q: "hat", page: "2" });
+  it("replaces an existing value", () => {
+    expect(applyQueryUpdates({ q: "hat" }, { q: "jacket" })).toEqual({
+      q: "jacket",
+    });
   });
 
-  it("omits page 1 from the URL", () => {
+  it("removes a key when the update clears it", () => {
     expect(
-      applyQueryUpdates({ q: "hat", page: "2" }, { page: undefined }),
+      applyQueryUpdates({ q: "hat", available: "1" }, { available: undefined }),
     ).toEqual({ q: "hat" });
+  });
+
+  it("does not mutate the input", () => {
+    const current = { q: "hat" };
+    applyQueryUpdates(current, { q: undefined });
+    expect(current).toEqual({ q: "hat" });
   });
 });
 
