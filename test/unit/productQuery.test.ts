@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   CATALOG_PATH,
   DEFAULT_SORT,
+  appliedFilterCount,
   applyQueryUpdates,
   catalogQuerySource,
   clampPage,
@@ -123,5 +124,29 @@ describe("applyQueryUpdates", () => {
     expect(
       applyQueryUpdates({ q: "hat", page: "2" }, { page: undefined }),
     ).toEqual({ q: "hat" });
+  });
+});
+
+describe("appliedFilterCount", () => {
+  it("counts search, explicit sort, categories, and availability", () => {
+    expect(
+      appliedFilterCount({
+        query: "jacket",
+        sort: "rating-desc",
+        categories: ["electronics", "jewelery"],
+        available: true,
+      }),
+    ).toBe(5);
+  });
+
+  it("ignores implicit default sort and empty search", () => {
+    expect(
+      appliedFilterCount({
+        query: "",
+        sort: null,
+        categories: [],
+        available: false,
+      }),
+    ).toBe(0);
   });
 });

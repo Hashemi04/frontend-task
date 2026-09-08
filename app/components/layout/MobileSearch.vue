@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Product } from "~/types/product";
 import { queryString } from "~/utils/productQuery";
-import { catalogImage } from "~/utils/catalogImage";
 
 const props = defineProps<{
   open: boolean;
@@ -151,8 +150,9 @@ function clearDraft() {
               :to="`/products/${product.id}`"
               class="flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-page"
             >
-              <img
-                :src="catalogImage(product.image, 96)"
+              <NuxtImg
+                provider="catalog"
+                :src="String(product.id)"
                 :alt="product.title"
                 width="48"
                 height="48"

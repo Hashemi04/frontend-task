@@ -119,23 +119,21 @@ const bottomSocial: { href: string; label: string; icon: Component }[] = [
         <div
           class="mt-4 flex justify-center gap-3 md:absolute md:end-10 md:top-1/2 md:mt-0 md:-translate-y-1/2 lg:end-16"
         >
-          <img
+          <NuxtImg
             src="/enamad.png"
             alt="نماد اعتماد الکترونیکی"
             width="72"
             height="72"
             class="size-[72px] rounded-md bg-surface object-contain shadow-sm"
             loading="lazy"
-            decoding="async"
           />
-          <img
+          <NuxtImg
             src="/samandehi.png"
             alt="ستاد ساماندهی پایگاه‌های اینترنتی"
             width="72"
             height="72"
             class="size-[72px] rounded-md bg-surface object-contain shadow-sm"
             loading="lazy"
-            decoding="async"
           />
         </div>
       </div>

@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import type { Product } from '~/types/product'
-import { catalogImage } from '~/utils/catalogImage'
+import type { Product } from "~/types/product";
 
 defineProps<{
-  product: Product
-  priority?: boolean
-  eager?: boolean
-}>()
+  product: Product;
+  priority?: boolean;
+  eager?: boolean;
+}>();
 </script>
 
 <template>
@@ -18,19 +17,22 @@ defineProps<{
       :to="`/products/${product.id}`"
       class="flex h-full flex-col overflow-hidden rounded-card bg-surface shadow-card"
     >
-      <img
+      <NuxtImg
+        provider="catalog"
+        :src="String(product.id)"
         class="block w-full aspect-[4/3] object-contain p-4"
-        :src="catalogImage(product.image, 400, product.id)"
         :alt="product.title"
-        :loading="priority || eager ? 'eager' : 'lazy'"
-        :fetchpriority="priority ? 'high' : 'auto'"
-        :decoding="priority || eager ? undefined : 'async'"
-        sizes="(min-width: 1024px) 280px, (min-width: 768px) 45vw, 90vw"
         width="400"
         height="300"
-      >
+        sizes="xs:90vw sm:45vw lg:280px"
+        :preload="priority"
+        :loading="priority || eager ? 'eager' : 'lazy'"
+        :fetchpriority="priority ? 'high' : 'auto'"
+      />
       <div class="flex flex-1 flex-col gap-4 px-4 pb-4">
-        <h2 class="m-0 line-clamp-2 min-h-[3.25em] text-start text-[0.95rem] font-semibold leading-relaxed">
+        <h2
+          class="m-0 line-clamp-2 min-h-[3.25em] text-start text-[0.95rem] font-semibold leading-relaxed"
+        >
           {{ product.title }}
         </h2>
         <BaseButton variant="outline" block decorative class="mt-auto">

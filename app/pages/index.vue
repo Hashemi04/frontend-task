@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { formatCount } from "~/utils/format";
 import { catalogCategories } from "~/utils/fakeStore";
-import { catalogImage } from "~/utils/catalogImage";
+import { itemListJsonLd } from "~/utils/seo";
 
 definePageMeta({
   pageTransition: false,
@@ -43,6 +43,7 @@ const {
   clearAvailable,
   toggleCategory,
   clearCategory,
+  appliedCount,
 } = useProductFilters(catalog, allCategories);
 
 const filtersOpen = ref(false);
@@ -91,61 +92,16 @@ function goToPage(next: number) {
   });
 }
 
-const appliedCount = computed(
-  () =>
-    (appliedSort.value ? 1 : 0) +
-    selectedCategories.value.length +
-    (available.value ? 1 : 0),
-);
-
-function preloadLcpImage(href: string, media: string) {
-  return {
-    rel: "preload" as const,
-    as: "image" as const,
-    type: "image/webp",
-    href,
-    media,
-    fetchPriority: "high" as const,
-  };
-}
-
-useHead(() => {
-  const first = pagedProducts.value[0];
-  const mobileLcp = pagedProducts.value[1] ?? first;
-
-  return {
-    link: [
-      ...(first
-        ? [preloadLcpImage(catalogImage(first.image, 400, first.id), "(min-width: 768px)")]
-        : []),
-      ...(mobileLcp
-        ? [
-            preloadLcpImage(
-              catalogImage(mobileLcp.image, 400, mobileLcp.id),
-              "(max-width: 767px)",
-            ),
-          ]
-        : []),
-    ],
-    script: catalog.value.length
-      ? [
-          {
-            type: "application/ld+json",
-            textContent: {
-              "@context": "https://schema.org",
-              "@type": "ItemList",
-              itemListElement: catalog.value.map((product, index) => ({
-                "@type": "ListItem",
-                position: index + 1,
-                url: `${origin}/products/${product.id}`,
-                name: product.title,
-              })),
-            },
-          },
-        ]
-      : [],
-  };
-});
+useHead(() => ({
+  script: pagedProducts.value.length
+    ? [
+        {
+          type: "application/ld+json",
+          textContent: itemListJsonLd(origin, pagedProducts.value),
+        },
+      ]
+    : [],
+}));
 </script>
 
 <template>

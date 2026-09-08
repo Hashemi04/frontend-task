@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Product } from "~/types/product";
-import { catalogImage } from "~/utils/catalogImage";
 
 defineProps<{
   product: Product;
@@ -58,18 +57,21 @@ onUnmounted(() => {
     </h1>
 
     <div class="relative mx-auto aspect-square w-full max-h-hero overflow-hidden rounded-2xl bg-page">
-      <img
+      <NuxtImg
+        provider="catalog"
+        :src="String(product.id)"
         class="absolute inset-0 size-full object-contain p-4 md:p-8 lg:p-10"
-        :src="catalogImage(product.image, 640, product.id)"
         :alt="product.title"
         width="640"
         height="640"
-        fetchpriority="high"
+        sizes="xs:90vw sm:640px lg:1000px"
+        preload
         loading="eager"
+        fetchpriority="high"
       />
       <button
         type="button"
-        class="absolute start-3 top-3 flex size-10 cursor-pointer items-center justify-center gap-2 rounded-[13px] bg-black/50 p-2 text-white backdrop-blur-[1px]"
+        class="absolute start-3 top-3 flex size-12 cursor-pointer items-center justify-center gap-2 rounded-[13px] bg-black/50 p-2 text-white backdrop-blur-[1px]"
         aria-label="بزرگ‌نمایی تصویر"
         @click="openZoom"
       >
@@ -91,15 +93,16 @@ onUnmounted(() => {
     >
       <button
         type="button"
-        class="absolute end-4 top-4 flex size-10 cursor-pointer items-center justify-center rounded-full bg-surface text-ink"
+        class="absolute end-4 top-4 flex size-12 cursor-pointer items-center justify-center rounded-full bg-surface text-ink"
         aria-label="بستن"
         @click="closeZoom"
       >
         <IconClose class="size-5" />
       </button>
-      <img
+      <NuxtImg
+        provider="catalog"
+        :src="String(product.id)"
         class="max-h-[90dvh] max-w-full object-contain"
-        :src="catalogImage(product.image, 1000, product.id)"
         :alt="product.title"
         width="1000"
         height="1000"

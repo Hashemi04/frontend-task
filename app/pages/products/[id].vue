@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { parseProductId } from "~/utils/fakeStore";
-import { catalogImage } from "~/utils/catalogImage";
+import { catalogImageUrl } from "~/utils/catalogImage";
+import { breadcrumbJsonLd, productJsonLd } from "~/utils/seo";
 
 const route = useRoute();
 const rawId = Array.isArray(route.params.id)
@@ -26,19 +27,21 @@ const {
   refresh: retryProduct,
 } = await useProductById(id);
 
-if (!productPending.value && !productError.value && !product.value) {
+if (
+  !productPending.value &&
+  !product.value &&
+  (!productError.value || isNotFoundError(productError.value))
+) {
   throw createError(notFound);
 }
 
 const origin = useSiteOrigin();
 
 usePageSeo({
-  title: product.value?.title ?? "محصول",
-  description: (product.value?.description ?? "").slice(0, 160),
-});
-
-useSeoMeta({
-  ogImage: product.value?.image,
+  title: () => product.value?.title ?? "محصول",
+  description: () => (product.value?.description ?? "").slice(0, 160),
+  ogImage: () =>
+    product.value ? catalogImageUrl(origin, product.value.id, 640) : undefined,
 });
 
 onMounted(() => {
@@ -53,42 +56,15 @@ watch(
 );
 
 useHead(() => ({
-  link: product.value
-    ? [
-        {
-          rel: "preload",
-          as: "image",
-          type: "image/webp",
-          href: catalogImage(product.value.image, 640, product.value.id),
-          fetchPriority: "high",
-        },
-      ]
-    : [],
   script: product.value
     ? [
         {
           type: "application/ld+json",
-          textContent: {
-            "@context": "https://schema.org",
-            "@type": "Product",
-            name: product.value.title,
-            image: product.value.image,
-            description: product.value.description,
-            sku: String(product.value.id),
-            category: product.value.category,
-            offers: {
-              "@type": "Offer",
-              price: product.value.price,
-              priceCurrency: "USD",
-              availability: "https://schema.org/InStock",
-              url: `${origin}/products/${product.value.id}`,
-            },
-            aggregateRating: {
-              "@type": "AggregateRating",
-              ratingValue: product.value.rating.rate,
-              reviewCount: product.value.rating.count,
-            },
-          },
+          textContent: productJsonLd(origin, product.value),
+        },
+        {
+          type: "application/ld+json",
+          textContent: breadcrumbJsonLd(origin, product.value),
         },
       ]
     : [],
