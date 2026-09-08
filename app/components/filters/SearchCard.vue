@@ -21,12 +21,12 @@ watch(
 const isActive = computed(() => focused.value || Boolean(draft.value.trim()));
 
 function onSubmit() {
-  emit('submit', draft.value);
+  emit("submit", draft.value);
 }
 
 function clear() {
-  draft.value = '';
-  emit('clear');
+  draft.value = "";
+  emit("clear");
 }
 </script>
 

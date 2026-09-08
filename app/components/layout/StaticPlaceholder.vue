@@ -1,8 +1,8 @@
 <script setup lang="ts">
 defineProps<{
-  title: string
-  description?: string
-}>()
+  title: string;
+  description?: string;
+}>();
 </script>
 
 <template>
@@ -10,7 +10,7 @@ defineProps<{
     <BaseCard class="p-6">
       <h1 class="mb-3 text-xl font-bold leading-7">{{ title }}</h1>
       <p class="text-sm leading-7 text-muted">
-        {{ description ?? 'این بخش به‌زودی تکمیل می‌شود.' }}
+        {{ description ?? "این بخش به‌زودی تکمیل می‌شود." }}
       </p>
     </BaseCard>
   </div>

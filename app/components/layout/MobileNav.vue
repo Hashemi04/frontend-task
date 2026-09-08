@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { navItems, PHONE_HREF } from '~/data/nav'
+import { navItems, PHONE_HREF } from "~/data/nav";
 
 defineProps<{
-  open: boolean
-}>()
+  open: boolean;
+}>();
 
 const emit = defineEmits<{
-  close: []
-}>()
+  close: [];
+}>();
 </script>
 
 <template>
@@ -36,9 +36,7 @@ const emit = defineEmits<{
         />
       </nav>
 
-      <BaseButton class="mt-auto" :to="PHONE_HREF" block>
-        تماس
-      </BaseButton>
+      <BaseButton class="mt-auto" :to="PHONE_HREF" block> تماس </BaseButton>
     </div>
   </BaseDrawer>
 </template>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 usePageSeo({
-  robots: 'noindex, follow',
-  title: 'تماس با ما',
-  description: 'از طریق شماره تماس فروشگاه با ما در ارتباط باشید.',
-})
+  robots: "noindex, follow",
+  title: "تماس با ما",
+  description: "از طریق شماره تماس فروشگاه با ما در ارتباط باشید.",
+});
 </script>
 
 <template>

@@ -31,10 +31,7 @@ const emit = defineEmits<{
       @submit="emit('search', $event)"
       @clear="emit('clearSearch')"
     />
-    <AvailabilityToggle
-      :on="available"
-      @toggle="emit('available', $event)"
-    />
+    <AvailabilityToggle :on="available" @toggle="emit('available', $event)" />
     <SortCard
       :selected="sort"
       :name="sortName"

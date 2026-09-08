@@ -52,11 +52,15 @@ onUnmounted(() => {
 
 <template>
   <BaseCard as="section" class="!rounded-[32px] p-4 shadow-card md:p-6 lg:p-8">
-    <h1 class="mb-4 text-xl font-bold leading-8 text-heading lg:mb-6 lg:text-2xl lg:leading-9">
+    <h1
+      class="mb-4 text-xl font-bold leading-8 text-heading lg:mb-6 lg:text-2xl lg:leading-9"
+    >
       {{ product.title }}
     </h1>
 
-    <div class="relative mx-auto aspect-square w-full max-h-hero overflow-hidden rounded-2xl bg-page">
+    <div
+      class="relative mx-auto aspect-square w-full max-h-hero overflow-hidden rounded-2xl bg-page"
+    >
       <NuxtImg
         provider="catalog"
         :src="String(product.id)"

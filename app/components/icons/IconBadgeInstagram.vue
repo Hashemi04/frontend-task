@@ -1,5 +1,10 @@
 <template>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 21" fill="none" aria-hidden="true">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 21 21"
+    fill="none"
+    aria-hidden="true"
+  >
     <g clip-path="url(#icon-badge-instagram)">
       <path
         d="M12.5098 10.498C12.5098 11.608 11.61 12.5078 10.5 12.5078C9.39001 12.5078 8.49023 11.608 8.49023 10.498C8.49023 9.38806 9.39001 8.48828 10.5 8.48828C11.61 8.48828 12.5098 9.38806 12.5098 10.498Z"

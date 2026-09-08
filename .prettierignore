@@ -1,0 +1,9 @@
+.nuxt
+.output
+.vercel
+node_modules
+pnpm-lock.yaml
+data/catalog.json
+public/images
+test-results
+playwright-report

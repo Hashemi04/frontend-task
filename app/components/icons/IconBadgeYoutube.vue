@@ -1,5 +1,10 @@
 <template>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 21" fill="none" aria-hidden="true">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 21 21"
+    fill="none"
+    aria-hidden="true"
+  >
     <g clip-path="url(#icon-badge-youtube)">
       <path
         d="M9.19263 12.466L12.6081 10.4989L9.19263 8.53174V12.466Z"

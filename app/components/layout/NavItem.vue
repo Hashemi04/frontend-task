@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import type { NavIconName } from '~/data/nav'
-import { navIcons } from '~/data/navIcons'
+import type { NavIconName } from "~/data/nav";
+import { navIcons } from "~/data/navIcons";
 
 const props = withDefaults(
   defineProps<{
-    to: string
-    label: string
-    icon: NavIconName
-    stacked?: boolean
+    to: string;
+    label: string;
+    icon: NavIconName;
+    stacked?: boolean;
   }>(),
   { stacked: false },
-)
+);
 
-const route = useRoute()
+const route = useRoute();
 
 const isActive = computed(() =>
-  props.to === '/' ? route.path === '/' : route.path.startsWith(props.to),
-)
+  props.to === "/" ? route.path === "/" : route.path.startsWith(props.to),
+);
 </script>
 
 <template>
@@ -26,7 +26,9 @@ const isActive = computed(() =>
       stacked
         ? [
             'flex items-center gap-2 rounded-card px-3 py-3 text-sm font-medium',
-            isActive ? 'bg-primary-soft text-primary' : 'text-ink hover:bg-page',
+            isActive
+              ? 'bg-primary-soft text-primary'
+              : 'text-ink hover:bg-page',
           ]
         : [
             'relative flex items-center gap-2 text-sm font-medium transition-colors',
@@ -34,7 +36,11 @@ const isActive = computed(() =>
           ]
     "
   >
-    <component :is="navIcons[icon]" class="shrink-0" :class="stacked ? 'size-5' : 'size-4'" />
+    <component
+      :is="navIcons[icon]"
+      class="shrink-0"
+      :class="stacked ? 'size-5' : 'size-4'"
+    />
     <span class="relative">
       {{ label }}
       <span
