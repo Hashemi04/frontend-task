@@ -17,7 +17,11 @@ export function catalogImagePath(productId: number, width?: number) {
   return `/images/p/${productId}-${snapCatalogWidth(width)}.webp`;
 }
 
-export function catalogImageUrl(origin: string, productId: number, width?: number) {
+export function catalogImageUrl(
+  origin: string,
+  productId: number,
+  width?: number,
+) {
   return `${origin.replace(/\/$/, "")}${catalogImagePath(productId, width)}`;
 }
 
