@@ -73,25 +73,35 @@ const transitionName = computed(() => {
   return "drawer";
 });
 
-const panelClass = computed(() => {
-  if (props.placement === "bottom") {
-    const rounding =
-      canExpand.value && expanded.value && !dragging.value
-        ? "rounded-none"
-        : "rounded-t-3xl";
-    const size = dragging.value
-      ? "max-h-dvh"
-      : canExpand.value && expanded.value
-        ? "h-dvh max-h-dvh"
-        : "max-h-[85vh]";
-    const motion = canExpand.value && !dragging.value ? "sheet-snapping" : "";
-    return `drawer-panel absolute inset-x-0 bottom-0 z-50 flex ${size} ${rounding} ${motion} flex-col bg-surface shadow-card`;
+const PANEL_BASE =
+  "drawer-panel absolute z-50 flex flex-col bg-surface shadow-card outline-none";
+
+const placementClass: Record<NonNullable<typeof props.placement>, string> = {
+  bottom: "inset-x-0 bottom-0",
+  top: "inset-x-0 top-0 max-h-[85vh] rounded-b-3xl",
+  start: "inset-y-0 start-0 w-[min(20rem,90vw)]",
+};
+
+/** While dragging, height follows the pointer, so no snap transition. */
+const bottomSheetClass = computed(() => {
+  if (dragging.value) {
+    return "max-h-dvh rounded-t-3xl";
   }
-  if (props.placement === "top") {
-    return "drawer-panel absolute inset-x-0 top-0 z-50 flex max-h-[85vh] flex-col rounded-b-3xl bg-surface shadow-card";
+
+  if (canExpand.value && expanded.value) {
+    return "h-dvh max-h-dvh rounded-none sheet-snapping";
   }
-  return "drawer-panel absolute inset-y-0 start-0 z-50 flex w-[min(20rem,90vw)] flex-col bg-surface shadow-card";
+
+  return canExpand.value
+    ? "max-h-[85vh] rounded-t-3xl sheet-snapping"
+    : "max-h-[85vh] rounded-t-3xl";
 });
+
+const panelClass = computed(() => [
+  PANEL_BASE,
+  placementClass[props.placement],
+  props.placement === "bottom" ? bottomSheetClass.value : "",
+]);
 </script>
 
 <template>
@@ -112,7 +122,7 @@ const panelClass = computed(() => {
           tabindex="-1"
           :aria-label="title"
           :aria-expanded="canExpand ? expanded : undefined"
-          :class="[panelClass, 'outline-none']"
+          :class="panelClass"
           :style="panelStyle"
           @pointerdown="onPointerDown"
         >
