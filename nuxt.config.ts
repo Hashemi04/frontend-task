@@ -1,7 +1,6 @@
 import tailwindcss from "@tailwindcss/vite";
 import { fetchProductPrerenderRoutes } from "./build/catalog";
 import { resolveSiteUrl } from "./build/siteUrl";
-import { PAGE_SIZE } from "./app/utils/productQuery";
 
 const staticRoutes = [
   "/",
@@ -22,7 +21,7 @@ const longCache = {
 };
 
 const siteUrl = resolveSiteUrl();
-const productRoutes = await fetchProductPrerenderRoutes(PAGE_SIZE);
+const productRoutes = await fetchProductPrerenderRoutes();
 
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",

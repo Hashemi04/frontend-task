@@ -6,18 +6,16 @@ import sharp from "sharp";
 
 /**
  * Build-time artifact: writes `/images/p/{id}-{width}.webp` for the catalog
- * image provider. Output is gitignored — CI and Vercel regenerate it. Do not
- * commit third-party product photos.
+ * image provider. Output is gitignored — CI and Vercel regenerate it.
  *
- * `--strict` (build/generate) exits non-zero when a size is missing.
- * Without it (dev) a missing size is a warning so the app can still boot.
+ * Never fails the build: missing files fall back to the Fake Store source
+ * URL in `CatalogImg` and in Product JSON-LD `image[]`.
  */
 const imageDir = fileURLToPath(new URL("../public/images/p/", import.meta.url));
 const fixturePath = fileURLToPath(
   new URL("../data/catalog.json", import.meta.url),
 );
 const widths = [400, 640, 1000];
-const strict = process.argv.includes("--strict");
 const FETCH_TIMEOUT_MS = 10_000;
 
 function timeout() {
@@ -109,12 +107,8 @@ for (const product of products) {
 
 if (missing.length) {
   const detail = [...new Set(missing)].join(", ");
-  if (strict) {
-    console.error(`[images] missing catalog images: ${detail}`);
-    process.exit(1);
-  }
   console.warn(
-    `[images] missing catalog images (dev continues, those will 404): ${detail}`,
+    `[images] missing catalog images; UI/JSON-LD fall back to Fake Store URLs: ${detail}`,
   );
 } else if (generated) {
   console.log(`[images] generated ${generated} catalog images`);

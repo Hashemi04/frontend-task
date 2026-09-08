@@ -9,6 +9,9 @@ import { fileURLToPath } from "node:url";
 const FAKE_STORE_PRODUCTS_URL = "https://fakestoreapi.com/products";
 const FETCH_TIMEOUT_MS = 10_000;
 
+/** Kept in sync with `PAGE_SIZE` in `app/utils/productQuery.ts` (see prerender tests). */
+export const CATALOG_PAGE_SIZE = 9;
+
 export const CATALOG_FIXTURE_PATH = fileURLToPath(
   new URL("../data/catalog.json", import.meta.url),
 );
@@ -63,9 +66,7 @@ export async function fetchCatalog(): Promise<{
  * Filtered result sets are narrower, so these cover every paginated URL a
  * crawler can reach from the catalog.
  */
-export async function fetchProductPrerenderRoutes(
-  pageSize: number,
-): Promise<string[]> {
+export async function fetchProductPrerenderRoutes(): Promise<string[]> {
   const { products } = await fetchCatalog();
   const ids = catalogIds(products);
 
@@ -75,7 +76,7 @@ export async function fetchProductPrerenderRoutes(
     );
   }
 
-  const totalPages = Math.max(1, Math.ceil(ids.length / pageSize));
+  const totalPages = Math.max(1, Math.ceil(ids.length / CATALOG_PAGE_SIZE));
   const pageRoutes = Array.from(
     { length: totalPages - 1 },
     (_, index) => `/page/${index + 2}`,

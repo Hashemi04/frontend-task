@@ -150,12 +150,10 @@ function clearDraft() {
               :to="`/products/${product.id}`"
               class="flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-page"
             >
-              <NuxtImg
-                provider="catalog"
-                :src="String(product.id)"
-                :alt="product.title"
-                width="48"
-                height="48"
+              <CatalogImg
+                :product="product"
+                :width="48"
+                :height="48"
                 class="size-12 shrink-0 rounded-lg bg-page object-contain p-1"
               />
               <p class="min-w-0 flex-1 text-sm font-medium leading-6">

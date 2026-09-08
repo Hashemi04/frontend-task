@@ -7,9 +7,9 @@
   },
   "packageManager": "pnpm@10.14.0",
   "scripts": {
-    "build": "node scripts/generate-catalog-images.mjs --strict && nuxt build",
+    "build": "node scripts/generate-catalog-images.mjs && nuxt build",
     "dev": "node scripts/generate-catalog-images.mjs && nuxt dev",
-    "generate": "node scripts/generate-catalog-images.mjs --strict && nuxt generate",
+    "generate": "node scripts/generate-catalog-images.mjs && nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",

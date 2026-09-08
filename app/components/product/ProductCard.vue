@@ -18,13 +18,11 @@ defineProps<{
       :to="`/products/${product.id}`"
       class="flex h-full flex-col overflow-hidden rounded-card bg-surface shadow-card"
     >
-      <NuxtImg
-        provider="catalog"
-        :src="String(product.id)"
+      <CatalogImg
+        :product="product"
         class="block w-full aspect-[4/3] object-contain p-4"
-        :alt="product.title"
-        width="400"
-        height="300"
+        :width="400"
+        :height="300"
         sizes="xs:90vw sm:45vw lg:280px"
         :preload="priority"
         :loading="priority || eager ? 'eager' : 'lazy'"

@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { catalogIds, readCatalogFixture } from "../../build/catalog";
+import {
+  catalogIds,
+  CATALOG_PAGE_SIZE,
+  readCatalogFixture,
+} from "../../build/catalog";
 import { PAGE_SIZE, catalogPagePath } from "../../app/utils/productQuery";
 
 describe("catalog fixture", () => {
@@ -17,6 +21,8 @@ describe("catalog fixture", () => {
   });
 
   it("covers every paginated catalog URL the fixture implies", () => {
+    expect(PAGE_SIZE).toBe(CATALOG_PAGE_SIZE);
+
     const totalPages = Math.ceil(catalogIds(fixture).length / PAGE_SIZE);
     const paths = Array.from({ length: totalPages }, (_, i) =>
       catalogPagePath(i + 1),

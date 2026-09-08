@@ -61,13 +61,11 @@ onUnmounted(() => {
     <div
       class="relative mx-auto aspect-square w-full max-h-hero overflow-hidden rounded-2xl bg-page"
     >
-      <NuxtImg
-        provider="catalog"
-        :src="String(product.id)"
+      <CatalogImg
+        :product="product"
         class="absolute inset-0 size-full object-contain p-4 md:p-8 lg:p-10"
-        :alt="product.title"
-        width="640"
-        height="640"
+        :width="640"
+        :height="640"
         sizes="xs:90vw sm:640px lg:1000px"
         preload
         loading="eager"
@@ -103,13 +101,11 @@ onUnmounted(() => {
       >
         <IconClose class="size-5" />
       </button>
-      <NuxtImg
-        provider="catalog"
-        :src="String(product.id)"
+      <CatalogImg
+        :product="product"
         class="max-h-[90dvh] max-w-full object-contain"
-        :alt="product.title"
-        width="1000"
-        height="1000"
+        :width="1000"
+        :height="1000"
       />
     </div>
   </Teleport>
