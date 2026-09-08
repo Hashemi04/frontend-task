@@ -1,13 +1,11 @@
 <script setup lang="ts">
+import type { RouteLocationRaw } from "vue-router";
 import { formatCount } from "~/utils/format";
 
 const props = defineProps<{
   page: number;
   totalPages: number;
-}>();
-
-const emit = defineEmits<{
-  change: [page: number];
+  pageLocation: (page: number) => RouteLocationRaw;
 }>();
 
 type PageItem = number | "gap";
@@ -35,8 +33,18 @@ const items = computed((): PageItem[] => {
   return out;
 });
 
-const buttonClass =
-  "inline-flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-surface text-heading shadow-card transition-colors hover:bg-primary-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-surface";
+const hasPrev = computed(() => props.page > 1);
+const hasNext = computed(() => props.page < props.totalPages);
+
+const stepBase =
+  "inline-flex size-10 shrink-0 items-center justify-center rounded-full shadow-card transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+const stepEnabled = `${stepBase} cursor-pointer bg-surface text-heading hover:bg-primary-soft`;
+const stepDisabled = `${stepBase} bg-surface text-heading opacity-40`;
+
+const numberBase =
+  "inline-flex size-10 items-center justify-center rounded-full text-xs font-medium leading-4 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+const numberCurrent = `${numberBase} bg-primary text-white`;
+const numberOther = `${numberBase} cursor-pointer bg-surface text-filter-item shadow-card hover:bg-primary-soft`;
 </script>
 
 <template>
@@ -44,15 +52,18 @@ const buttonClass =
     class="mt-6 flex items-center justify-between gap-2 md:justify-center md:gap-3"
     aria-label="صفحه‌بندی محصولات"
   >
-    <button
-      type="button"
-      :class="buttonClass"
-      :disabled="page <= 1"
+    <NuxtLink
+      v-if="hasPrev"
+      :to="pageLocation(page - 1)"
+      :class="stepEnabled"
+      rel="prev"
       aria-label="صفحه قبل"
-      @click="emit('change', page - 1)"
     >
       <IconChevron class="size-4 -rotate-90" />
-    </button>
+    </NuxtLink>
+    <span v-else :class="stepDisabled" aria-hidden="true">
+      <IconChevron class="size-4 -rotate-90" />
+    </span>
 
     <p
       class="min-w-0 flex-1 text-center text-xs font-medium leading-4 text-heading md:hidden"
@@ -69,32 +80,36 @@ const buttonClass =
         >
           …
         </span>
-        <button
-          v-else
-          type="button"
-          class="inline-flex size-10 cursor-pointer items-center justify-center rounded-full text-xs font-medium leading-4 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          :class="
-            item === page
-              ? 'bg-primary text-white'
-              : 'bg-surface text-filter-item shadow-card hover:bg-primary-soft'
-          "
-          :aria-current="item === page ? 'page' : undefined"
+        <span
+          v-else-if="item === page"
+          :class="numberCurrent"
+          aria-current="page"
           :aria-label="`صفحه ${formatCount(item)}`"
-          @click="emit('change', item)"
         >
           {{ formatCount(item) }}
-        </button>
+        </span>
+        <NuxtLink
+          v-else
+          :to="pageLocation(item)"
+          :class="numberOther"
+          :aria-label="`صفحه ${formatCount(item)}`"
+        >
+          {{ formatCount(item) }}
+        </NuxtLink>
       </li>
     </ul>
 
-    <button
-      type="button"
-      :class="buttonClass"
-      :disabled="page >= totalPages"
+    <NuxtLink
+      v-if="hasNext"
+      :to="pageLocation(page + 1)"
+      :class="stepEnabled"
+      rel="next"
       aria-label="صفحه بعد"
-      @click="emit('change', page + 1)"
     >
       <IconChevron class="size-4 rotate-90" />
-    </button>
+    </NuxtLink>
+    <span v-else :class="stepDisabled" aria-hidden="true">
+      <IconChevron class="size-4 rotate-90" />
+    </span>
   </nav>
 </template>

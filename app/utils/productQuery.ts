@@ -1,60 +1,78 @@
-import type { Product } from '~/types/product'
+// Relative, not aliased: this module is also imported by `nuxt.config.ts`
+// (for PAGE_SIZE) where the `~` alias does not exist yet.
+import type { Product } from "../types/product";
 
 export const SORT_KEYS = [
-  'count-asc',
-  'count-desc',
-  'rating-desc',
-  'rating-asc',
-] as const
-export type SortKey = (typeof SORT_KEYS)[number]
-export const DEFAULT_SORT: SortKey = 'count-asc'
-export const PAGE_SIZE = 9
-export const CATALOG_PATH = '/'
+  "count-asc",
+  "count-desc",
+  "rating-desc",
+  "rating-asc",
+] as const;
+export type SortKey = (typeof SORT_KEYS)[number];
+export const DEFAULT_SORT: SortKey = "count-asc";
+export const PAGE_SIZE = 9;
+export const CATALOG_PATH = "/";
+
+const CATALOG_PAGE_PATH = /^\/page\/(\d+)\/?$/;
+
+/**
+ * Pagination lives in the path (`/page/2`) so every page is a real,
+ * crawlable, prerenderable URL. Filters stay in the query string, and
+ * changing one sends you back to `/`, which resets pagination.
+ */
+export function isCatalogPath(path: string) {
+  return path === CATALOG_PATH || CATALOG_PAGE_PATH.test(path);
+}
+
+export function catalogPagePath(page: number) {
+  return page > 1 ? `/page/${page}` : CATALOG_PATH;
+}
 
 export function catalogQuerySource(
   path: string,
   currentQuery: Record<string, unknown>,
 ) {
-  return path === CATALOG_PATH ? { ...currentQuery } : {}
+  return isCatalogPath(path) ? { ...currentQuery } : {};
 }
 
 export function queryString(value: unknown) {
-  if (typeof value === 'string') {
-    return value.trim()
+  if (typeof value === "string") {
+    return value.trim();
   }
 
-  if (Array.isArray(value) && typeof value[0] === 'string') {
-    return value[0].trim()
+  if (Array.isArray(value) && typeof value[0] === "string") {
+    return value[0].trim();
   }
 
-  return ''
+  return "";
 }
 
 export function isSortKey(value: string): value is SortKey {
-  return (SORT_KEYS as readonly string[]).includes(value)
+  return (SORT_KEYS as readonly string[]).includes(value);
 }
 
 export function parseSort(value: unknown): SortKey {
-  const raw = queryString(value)
-  return isSortKey(raw) ? raw : DEFAULT_SORT
+  const raw = queryString(value);
+  return isSortKey(raw) ? raw : DEFAULT_SORT;
 }
 
 export function parseAppliedSort(value: unknown): SortKey | null {
-  const raw = queryString(value)
-  return isSortKey(raw) ? raw : null
+  const raw = queryString(value);
+  return isSortKey(raw) ? raw : null;
 }
 
 export function parsePage(value: unknown) {
-  const n = Number(queryString(value))
-  if (!Number.isInteger(n) || n < 1) {
-    return 1
+  const raw = queryString(value);
+  if (!/^\d+$/.test(raw)) {
+    return 1;
   }
 
-  return n
+  const n = Number(raw);
+  return n >= 1 ? n : 1;
 }
 
 export function clampPage(requested: number, totalPages: number) {
-  return Math.min(requested, Math.max(1, totalPages))
+  return Math.min(requested, Math.max(1, totalPages));
 }
 
 export function parseAvailable(value: unknown) {
@@ -62,70 +80,107 @@ export function parseAvailable(value: unknown) {
 }
 
 export function parseCategories(value: unknown, allowed: string[]) {
-  const raw = queryString(value)
+  const raw = queryString(value);
   if (!raw) {
-    return []
+    return [];
   }
 
-  const allowedSet = new Set(allowed)
-  return raw.split(',').map(item => item.trim()).filter(item => allowedSet.has(item))
+  const allowedSet = new Set(allowed);
+  return raw
+    .split(",")
+    .map((item) => item.trim())
+    .filter((item) => allowedSet.has(item));
 }
 
 export function compareProducts(a: Product, b: Product, sort: SortKey) {
-  if (sort === 'count-asc') {
-    return a.rating.count - b.rating.count
+  if (sort === "count-asc") {
+    return a.rating.count - b.rating.count;
   }
 
-  if (sort === 'count-desc') {
-    return b.rating.count - a.rating.count
+  if (sort === "count-desc") {
+    return b.rating.count - a.rating.count;
   }
 
-  if (sort === 'rating-asc') {
-    return a.rating.rate - b.rating.rate
+  if (sort === "rating-asc") {
+    return a.rating.rate - b.rating.rate;
   }
 
-  return b.rating.rate - a.rating.rate
+  return b.rating.rate - a.rating.rate;
+}
+
+export interface CatalogCriteria {
+  query: string;
+  categories: string[];
+  available: boolean;
+  sort: SortKey;
+}
+
+/**
+ * The whole catalog filter, as a pure function of the products and the parsed
+ * URL state, so it can be tested without a router or a DOM.
+ */
+export function filterProducts(
+  products: Product[],
+  criteria: CatalogCriteria,
+  isAvailable: (product: Product) => boolean,
+) {
+  const term = criteria.query.trim().toLowerCase();
+  let list = products;
+
+  if (term) {
+    list = list.filter((product) => product.title.toLowerCase().includes(term));
+  }
+
+  if (criteria.categories.length) {
+    const selected = new Set(criteria.categories);
+    list = list.filter((product) => selected.has(product.category));
+  }
+
+  if (criteria.available) {
+    list = list.filter(isAvailable);
+  }
+
+  return [...list].sort((a, b) => compareProducts(a, b, criteria.sort));
+}
+
+export function paginate<T>(
+  items: T[],
+  requestedPage: number,
+  size = PAGE_SIZE,
+) {
+  const totalPages = Math.max(1, Math.ceil(items.length / size));
+  const page = clampPage(requestedPage, totalPages);
+  const start = (page - 1) * size;
+
+  return { page, totalPages, items: items.slice(start, start + size) };
 }
 
 export function applyQueryUpdates(
   current: Record<string, unknown>,
   updates: Record<string, string | undefined>,
 ) {
-  const omit = new Set<string>()
-  if (!('page' in updates)) {
-    omit.add('page')
-  }
-  for (const [key, value] of Object.entries(updates)) {
-    if (!value) {
-      omit.add(key)
-    }
-  }
+  const cleared = new Set(
+    Object.entries(updates)
+      .filter(([, value]) => !value)
+      .map(([key]) => key),
+  );
 
-  const next: Record<string, unknown> = {}
-  for (const [key, value] of Object.entries(current)) {
-    if (!omit.has(key)) {
-      next[key] = value
-    }
-  }
-  for (const [key, value] of Object.entries(updates)) {
-    if (value) {
-      next[key] = value
-    }
-  }
-
-  return next
+  return Object.fromEntries([
+    ...Object.entries(current).filter(([key]) => !cleared.has(key)),
+    ...Object.entries(updates).filter(([, value]) => Boolean(value)),
+  ]);
 }
 
 export function appliedFilterCount(options: {
-  query: string
-  sort: SortKey | null
-  categories: string[]
-  available: boolean
+  query: string;
+  sort: SortKey | null;
+  categories: string[];
+  available: boolean;
 }) {
   return (
     (options.query.trim() ? 1 : 0) +
     (options.sort ? 1 : 0) +
     options.categories.length +
     (options.available ? 1 : 0)
-  )
+  );
 }

@@ -1,60 +1,59 @@
-import type { MaybeRefOrGetter } from 'vue'
-import { toValue } from 'vue'
-import type { Product } from '~/types/product'
-import type { SortKey } from '~/utils/productQuery'
-import { isProductAvailable } from '~/utils/fakeStore'
+import type { MaybeRefOrGetter } from "vue";
+import { toValue } from "vue";
+import type { Product } from "~/types/product";
+import type { SortKey } from "~/utils/productQuery";
+import { isProductAvailable } from "~/utils/fakeStore";
 import {
-  PAGE_SIZE,
-  clampPage,
-  compareProducts,
+  appliedFilterCount,
+  filterProducts,
+  paginate,
   parseAppliedSort,
   parseAvailable,
   parseCategories,
   parsePage,
   parseSort,
   queryString,
-  appliedFilterCount,
-} from '~/utils/productQuery'
+} from "~/utils/productQuery";
 
 export function useProductFilters(
   products: MaybeRefOrGetter<Product[]>,
   allCategories: MaybeRefOrGetter<string[]>,
 ) {
-  const route = useRoute()
-  const { patchQuery, setQuery } = useCatalogQuery()
+  const route = useRoute();
+  const router = useRouter();
+  const { patchQuery, setQuery, catalogPageLocation } = useCatalogQuery();
 
-  const query = computed(() => queryString(route.query.q))
+  const query = computed(() => queryString(route.query.q));
 
-  const sort = computed(() => parseSort(route.query.sort))
+  const sort = computed(() => parseSort(route.query.sort));
 
-  const catalog = computed(() => toValue(products))
-  const categories = computed(() => toValue(allCategories))
+  const catalog = computed(() => toValue(products));
+  const categories = computed(() => toValue(allCategories));
 
   const selectedCategories = computed(() =>
     parseCategories(route.query.categories, categories.value),
-  )
+  );
 
   const categoryCounts = computed(() =>
-    categories.value.map(category => ({
+    categories.value.map((category) => ({
       category,
-      count: catalog.value.filter(product => product.category === category)
+      count: catalog.value.filter((product) => product.category === category)
         .length,
     })),
-  )
+  );
 
-  const available = computed(() => parseAvailable(route.query.available))
+  const available = computed(() => parseAvailable(route.query.available));
 
-  const appliedSort = computed(() => parseAppliedSort(route.query.sort))
+  const appliedSort = computed(() => parseAppliedSort(route.query.sort));
 
-  const hasAppliedFilters = computed(
-    () =>
-      Boolean(
-        query.value ||
-          appliedSort.value ||
-          selectedCategories.value.length ||
-          available.value,
-      ),
-  )
+  const hasAppliedFilters = computed(() =>
+    Boolean(
+      query.value ||
+      appliedSort.value ||
+      selectedCategories.value.length ||
+      available.value,
+    ),
+  );
 
   const appliedCount = computed(() =>
     appliedFilterCount({
@@ -63,88 +62,77 @@ export function useProductFilters(
       categories: selectedCategories.value,
       available: available.value,
     }),
-  )
+  );
 
-  const filteredProducts = computed(() => {
-    const term = query.value.toLowerCase()
-    let list = catalog.value
+  const filteredProducts = computed(() =>
+    filterProducts(
+      catalog.value,
+      {
+        query: query.value,
+        categories: selectedCategories.value,
+        available: available.value,
+        sort: sort.value,
+      },
+      isProductAvailable,
+    ),
+  );
 
-    if (term) {
-      list = list.filter(product => product.title.toLowerCase().includes(term))
-    }
+  const requestedPage = computed(() => parsePage(route.params.page));
 
-    if (selectedCategories.value.length) {
-      const selected = new Set(selectedCategories.value)
-      list = list.filter(product => selected.has(product.category))
-    }
+  const pageState = computed(() =>
+    paginate(filteredProducts.value, requestedPage.value),
+  );
 
-    if (available.value) {
-      list = list.filter(isProductAvailable)
-    }
-
-    return [...list].sort((a, b) => compareProducts(a, b, sort.value))
-  })
-
-  const requestedPage = computed(() => parsePage(route.query.page))
-
-  const totalPages = computed(() =>
-    Math.max(1, Math.ceil(filteredProducts.value.length / PAGE_SIZE)),
-  )
-
-  const page = computed(() => clampPage(requestedPage.value, totalPages.value))
-
-  const pagedProducts = computed(() => {
-    const start = (page.value - 1) * PAGE_SIZE
-    return filteredProducts.value.slice(start, start + PAGE_SIZE)
-  })
-
-  function setPage(next: number) {
-    const clamped = Math.min(Math.max(1, next), totalPages.value)
-    patchQuery({ page: clamped > 1 ? String(clamped) : undefined })
-  }
+  const page = computed(() => pageState.value.page);
+  const totalPages = computed(() => pageState.value.totalPages);
+  const pagedProducts = computed(() => pageState.value.items);
 
   function setSort(next: SortKey) {
-    patchQuery({ sort: next })
+    patchQuery({ sort: next });
   }
 
   function setCategories(next: string[]) {
-    patchQuery({ categories: next.length ? next.join(',') : undefined })
+    patchQuery({ categories: next.length ? next.join(",") : undefined });
   }
 
   function toggleCategory(category: string) {
-    const current = selectedCategories.value
+    const current = selectedCategories.value;
     const next = current.includes(category)
-      ? current.filter(item => item !== category)
-      : [...current, category]
-    setCategories(next)
+      ? current.filter((item) => item !== category)
+      : [...current, category];
+    setCategories(next);
   }
 
   function clearCategory(category: string) {
-    setCategories(selectedCategories.value.filter(item => item !== category))
+    setCategories(selectedCategories.value.filter((item) => item !== category));
   }
 
   function setAvailable(next: boolean) {
-    patchQuery({ available: next ? '1' : undefined })
+    patchQuery({ available: next ? "1" : undefined });
   }
 
   function clearAvailable() {
-    setAvailable(false)
+    setAvailable(false);
   }
 
   function clearSort() {
-    patchQuery({ sort: undefined })
+    patchQuery({ sort: undefined });
   }
 
+  /**
+   * `/page/99` is a valid URL to type but not a valid page to sit on. Replace
+   * it with the last real page instead of rendering an empty grid.
+   */
   function syncRequestedPage() {
     if (requestedPage.value === page.value) {
-      return
+      return;
     }
 
-    setPage(page.value)
+    router.replace(catalogPageLocation(page.value));
   }
 
-  onMounted(syncRequestedPage)
-  watch(requestedPage, syncRequestedPage)
+  onMounted(syncRequestedPage);
+  watch([requestedPage, totalPages], syncRequestedPage);
 
   return {
     query,
@@ -159,13 +147,13 @@ export function useProductFilters(
     page,
     totalPages,
     pagedProducts,
+    pageLocation: catalogPageLocation,
     setQuery,
     setSort,
-    setPage,
     setAvailable,
     clearSort,
     clearAvailable,
     toggleCategory,
     clearCategory,
-  }
+  };
 }
