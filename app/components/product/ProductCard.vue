@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Product } from "~/types/product";
+import { formatPrice } from "~/utils/format";
 
 defineProps<{
   product: Product;
@@ -29,12 +30,17 @@ defineProps<{
         :loading="priority || eager ? 'eager' : 'lazy'"
         :fetchpriority="priority ? 'high' : 'auto'"
       />
-      <div class="flex flex-1 flex-col gap-4 px-4 pb-4">
+      <div class="flex flex-1 flex-col gap-3 px-4 pb-4">
         <h2
           class="m-0 line-clamp-2 min-h-[3.25em] text-start text-[0.95rem] font-semibold leading-relaxed"
         >
           {{ product.title }}
         </h2>
+
+        <p class="text-[0.95rem] font-bold text-primary">
+          {{ formatPrice(product.price) }}
+        </p>
+
         <BaseButton variant="outline" block decorative class="mt-auto">
           مشاهده جزئیات
           <span

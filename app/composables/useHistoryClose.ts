@@ -1,4 +1,4 @@
-const HISTORY_FLAG = 'appOverlay'
+const HISTORY_FLAG = "appOverlay";
 
 /**
  * Closes an overlay when the browser or device back button is pressed.
@@ -10,57 +10,60 @@ export function useHistoryClose(
   open: MaybeRefOrGetter<boolean>,
   close: () => void,
 ) {
-  const pushed = ref(false)
-  const openedHref = ref('')
+  const pushed = ref(false);
+  const openedHref = ref("");
 
   watch(
     () => toValue(open),
     (isOpen) => {
       if (!import.meta.client) {
-        return
+        return;
       }
 
       if (isOpen) {
-        openedHref.value = location.href
-        history.pushState({ ...(history.state ?? {}), [HISTORY_FLAG]: true }, '')
-        pushed.value = true
-        return
+        openedHref.value = location.href;
+        history.pushState(
+          { ...(history.state ?? {}), [HISTORY_FLAG]: true },
+          "",
+        );
+        pushed.value = true;
+        return;
       }
 
       if (!pushed.value) {
-        return
+        return;
       }
 
-      pushed.value = false
+      pushed.value = false;
       if (!history.state?.[HISTORY_FLAG]) {
-        return
+        return;
       }
 
       if (location.href === openedHref.value) {
-        history.back()
-        return
+        history.back();
+        return;
       }
 
       const { [HISTORY_FLAG]: _flag, ...nextState } = {
         ...(history.state ?? {}),
-      }
-      history.replaceState(nextState, '')
+      };
+      history.replaceState(nextState, "");
     },
-  )
+  );
 
   function onPopState() {
     if (!toValue(open)) {
-      return
+      return;
     }
-    pushed.value = false
-    close()
+    pushed.value = false;
+    close();
   }
 
   onMounted(() => {
-    window.addEventListener('popstate', onPopState)
-  })
+    window.addEventListener("popstate", onPopState);
+  });
 
   onUnmounted(() => {
-    window.removeEventListener('popstate', onPopState)
-  })
+    window.removeEventListener("popstate", onPopState);
+  });
 }

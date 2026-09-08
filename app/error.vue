@@ -1,31 +1,34 @@
 <script setup lang="ts">
-const error = useError()
+const error = useError();
 
-const is404 = computed(() => error.value?.statusCode === 404)
+const is404 = computed(() => error.value?.statusCode === 404);
 
 // 404 → empty (missing page or product)
 // anything else → error (unexpected failure)
 const title = computed(() =>
-  is404.value ? (error.value?.statusMessage || 'صفحه پیدا نشد') : 'خطایی رخ داد',
-)
+  is404.value ? error.value?.statusMessage || "صفحه پیدا نشد" : "خطایی رخ داد",
+);
 const description = computed(() => {
-  if (error.value?.message && error.value.message !== error.value.statusMessage) {
-    return error.value.message
+  if (
+    error.value?.message &&
+    error.value.message !== error.value.statusMessage
+  ) {
+    return error.value.message;
   }
   return is404.value
-    ? 'آدرس وارد شده در فروشگاه وجود ندارد.'
-    : 'دریافت این صفحه با خطا مواجه شد.'
-})
+    ? "آدرس وارد شده در فروشگاه وجود ندارد."
+    : "دریافت این صفحه با خطا مواجه شد.";
+});
 
 function goHome() {
-  clearError({ redirect: '/' })
+  clearError({ redirect: "/" });
 }
 
 useSeoMeta({
   title,
   description,
-  robots: 'noindex, nofollow',
-})
+  robots: "noindex, nofollow",
+});
 </script>
 
 <template>
