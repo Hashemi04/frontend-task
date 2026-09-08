@@ -1,23 +1,13 @@
+/**
+ * Single source of truth for absolute URLs (canonical, og:url, JSON-LD).
+ * `siteUrl` is resolved once at build time (see `build/siteUrl.ts`), so server
+ * and client always agree and prerendered markup cannot drift from the browser.
+ */
 export function useSiteOrigin() {
-  const config = useRuntimeConfig();
-  const configured = String(config.public.siteUrl ?? "").replace(/\/$/, "");
-  if (configured) {
-    return configured;
-  }
+  const configured = String(useRuntimeConfig().public.siteUrl ?? "").replace(
+    /\/+$/,
+    "",
+  );
 
-  const url = useRequestURL();
-
-  if (import.meta.client) {
-    return window.location.origin;
-  }
-
-  const hostname = url.hostname;
-  if (
-    (hostname === "localhost" || hostname === "127.0.0.1") &&
-    !url.port
-  ) {
-    return `${url.protocol}//${hostname}:3000`;
-  }
-
-  return url.origin;
+  return configured || useRequestURL().origin.replace(/\/+$/, "");
 }
