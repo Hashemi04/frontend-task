@@ -13,6 +13,7 @@ import {
   parsePage,
   parseSort,
   queryString,
+  appliedFilterCount,
 } from '~/utils/productQuery'
 
 export function useProductFilters(
@@ -53,6 +54,15 @@ export function useProductFilters(
           selectedCategories.value.length ||
           available.value,
       ),
+  )
+
+  const appliedCount = computed(() =>
+    appliedFilterCount({
+      query: query.value,
+      sort: appliedSort.value,
+      categories: selectedCategories.value,
+      available: available.value,
+    }),
   )
 
   const filteredProducts = computed(() => {
@@ -144,6 +154,7 @@ export function useProductFilters(
     selectedCategories,
     categoryCounts,
     hasAppliedFilters,
+    appliedCount,
     filteredProducts,
     page,
     totalPages,

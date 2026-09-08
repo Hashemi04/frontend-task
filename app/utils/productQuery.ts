@@ -115,3 +115,17 @@ export function applyQueryUpdates(
 
   return next
 }
+
+export function appliedFilterCount(options: {
+  query: string
+  sort: SortKey | null
+  categories: string[]
+  available: boolean
+}) {
+  return (
+    (options.query.trim() ? 1 : 0) +
+    (options.sort ? 1 : 0) +
+    options.categories.length +
+    (options.available ? 1 : 0)
+  )
+}

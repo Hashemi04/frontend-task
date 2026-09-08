@@ -1,5 +1,5 @@
-import { FetchError } from 'ofetch'
 import type { Product } from '~/types/product'
+import { isNotFoundError } from '~/utils/httpError'
 import { parseProduct, parseProductList } from '~/utils/fakeStore'
 
 export function useCatalogProducts() {
@@ -16,7 +16,7 @@ export function useProductById(id: number) {
       return parseProduct(payload)
     }
     catch (error) {
-      if (error instanceof FetchError && error.statusCode === 404) {
+      if (isNotFoundError(error)) {
         return null
       }
 
