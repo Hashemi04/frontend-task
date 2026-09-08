@@ -1,15 +1,51 @@
+import './set-polyfill.mjs'
 import tailwindcss from '@tailwindcss/vite';
 
-// https://nuxt.com/docs/api/configuration/nuxt-config
+const staticRoutes = [
+  '/',
+  '/consultation',
+  '/faq',
+  '/contact',
+  '/about',
+  '/blog',
+  '/after-sales',
+  '/terms',
+  '/feedback',
+];
+
+const longCache = {
+  headers: {
+    'cache-control': 'public, max-age=31536000, immutable',
+  },
+};
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
+  devtools: { enabled: false },
+  sourcemap: { client: false, server: false },
   modules: ['@nuxt/eslint'],
   css: ['~/assets/css/main.css'],
-  // Subfolders group components by domain; names stay unique so we skip the path prefix.
   components: [{ path: '~/components', pathPrefix: false }],
+  experimental: {
+    defaults: {
+      nuxtLink: {
+        prefetchOn: {
+          visibility: false,
+          interaction: true,
+        },
+      },
+    },
+  },
   vite: {
     plugins: [tailwindcss()],
+    build: {
+      cssMinify: 'esbuild',
+    },
+  },
+  postcss: {
+    plugins: {
+      cssnano: false,
+    },
   },
   app: {
     pageTransition: { name: 'page' },
@@ -26,44 +62,49 @@ export default defineNuxtConfig({
           name: 'description',
           content: 'فهرست و جزئیات محصولات از فروشگاه آزمایشی Fake Store.',
         },
+        { name: 'theme-color', content: '#c2185b' },
       ],
       link: [
-        { rel: "preconnect", href: "https://cdn.jsdelivr.net", crossorigin: "" },
         {
-          rel: "preload",
-          as: "font",
-          type: "font/woff2",
-          href: "https://cdn.jsdelivr.net/gh/AmirAbbasVafaee/persian-fonts-cdn@main/fonts/yekan-bakh/YekanBakhFaNum-Regular.woff2",
-          crossorigin: "anonymous",
+          rel: 'preload',
+          as: 'font',
+          type: 'font/woff2',
+          href: '/fonts/YekanBakhFaNum-Regular.woff2',
+          crossorigin: 'anonymous',
         },
+        {
+          rel: 'preload',
+          as: 'font',
+          type: 'font/woff2',
+          href: '/fonts/YekanBakhFaNum-Bold.woff2',
+          crossorigin: 'anonymous',
+        },
+        { rel: 'icon', href: '/favicon.ico' },
       ],
     },
   },
   nitro: {
     compressPublicAssets: true,
+    prerender: {
+      crawlLinks: true,
+      routes: [
+        ...staticRoutes,
+        ...Array.from({ length: 20 }, (_, index) => `/products/${index + 1}`),
+      ],
+      ignore: ['/img', '/images'],
+    },
     routeRules: {
-      '/': { swr: 120 },
-      '/products/**': { swr: 120 },
-      '/consultation': { swr: 120 },
-      '/faq': { swr: 120 },
-      '/contact': { swr: 120 },
-      '/about': { swr: 120 },
-      '/blog': { swr: 120 },
-      '/after-sales': { swr: 120 },
-      '/terms': { swr: 120 },
-      '/feedback': { swr: 120 },
+      ...Object.fromEntries(staticRoutes.map((route) => [route, { prerender: true }])),
+      '/products/**': { prerender: true },
       '/api/products': { swr: 600 },
       '/api/products/**': { swr: 600 },
-      '/img**': {
-        headers: {
-          'cache-control': 'public, max-age=31536000, immutable',
-        },
-      },
-      '/_nuxt/**': {
-        headers: {
-          'cache-control': 'public, max-age=31536000, immutable',
-        },
-      },
+      '/fonts/**': longCache,
+      '/images/**': longCache,
+      '/enamad.png': longCache,
+      '/samandehi.png': longCache,
+      '/favicon.ico': longCache,
+      '/img**': longCache,
+      '/_nuxt/**': longCache,
     },
   },
 });

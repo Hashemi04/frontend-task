@@ -12,7 +12,7 @@ usePageSeo({
   description: "جستجو و مشاهده فهرست محصولات فروشگاه.",
 });
 
-const url = useRequestURL();
+const origin = useSiteOrigin();
 const {
   data: catalogData,
   pending: catalogPending,
@@ -108,7 +108,7 @@ useHead(() => {
             rel: "preload",
             as: "image",
             type: "image/webp",
-            href: `${url.origin}${catalogImage(lcp.image, 400)}`,
+            href: catalogImage(lcp.image, 400),
             fetchPriority: "high",
           },
         ]
@@ -123,7 +123,7 @@ useHead(() => {
               itemListElement: catalog.value.map((product, index) => ({
                 "@type": "ListItem",
                 position: index + 1,
-                url: `${url.origin}/products/${product.id}`,
+                url: `${origin}/products/${product.id}`,
                 name: product.title,
               })),
             },

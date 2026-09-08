@@ -67,7 +67,7 @@ body {
 
 @font-face {
   font-family: 'Yekan Bakh';
-  src: url('https://cdn.jsdelivr.net/gh/AmirAbbasVafaee/persian-fonts-cdn@main/fonts/yekan-bakh/YekanBakhFaNum-Regular.woff2') format('woff2');
+  src: url('/fonts/YekanBakhFaNum-Regular.woff2') format('woff2');
   font-weight: 400 500;
   font-style: normal;
   font-display: swap;
@@ -75,7 +75,7 @@ body {
 
 @font-face {
   font-family: 'Yekan Bakh';
-  src: url('https://cdn.jsdelivr.net/gh/AmirAbbasVafaee/persian-fonts-cdn@main/fonts/yekan-bakh/YekanBakhFaNum-Bold.woff2') format('woff2');
+  src: url('/fonts/YekanBakhFaNum-Bold.woff2') format('woff2');
   font-weight: 600 700;
   font-style: normal;
   font-display: swap;
@@ -170,7 +170,7 @@ body {
 }
 
 .catalog-in {
-  animation: catalog-in 280ms ease-out;
+  animation: none;
 }
 
 .page-leave-to {

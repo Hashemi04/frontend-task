@@ -53,19 +53,19 @@ onUnmounted(() => {
 
 <template>
   <BaseCard as="section" class="!rounded-[32px] p-4 shadow-card md:p-6 lg:p-8">
-    <h1 class="mb-4 text-xl font-bold leading-8 text-heading lg:mb-6 lg:text-2xl">
+    <h1 class="mb-4 text-xl font-bold leading-8 text-heading lg:mb-6 lg:text-2xl lg:leading-9">
       {{ product.title }}
     </h1>
 
-    <div class="relative overflow-hidden rounded-2xl bg-page">
+    <div class="relative mx-auto aspect-square w-full max-h-hero overflow-hidden rounded-2xl bg-page">
       <img
-        class="mx-auto block h-auto max-h-hero w-full object-contain p-4 md:p-8 lg:p-10"
-        :src="catalogImage(product.image, 640)"
+        class="absolute inset-0 size-full object-contain p-4 md:p-8 lg:p-10"
+        :src="catalogImage(product.image, 640, product.id)"
         :alt="product.title"
         width="640"
         height="640"
         fetchpriority="high"
-        decoding="async"
+        loading="eager"
       />
       <button
         type="button"
@@ -99,8 +99,10 @@ onUnmounted(() => {
       </button>
       <img
         class="max-h-[90dvh] max-w-full object-contain"
-        :src="catalogImage(product.image, 1000)"
+        :src="catalogImage(product.image, 1000, product.id)"
         :alt="product.title"
+        width="1000"
+        height="1000"
       />
     </div>
   </Teleport>

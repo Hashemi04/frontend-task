@@ -62,7 +62,9 @@ const bottomSocial: { href: string; label: string; icon: Component }[] = [
     <div
       class="mx-auto grid max-w-[1440px] grid-cols-2 items-start gap-x-8 gap-y-10 px-4 py-12 md:grid-cols-4 md:gap-8 md:px-10 lg:px-16"
     >
-      <p class="col-span-2 text-sm leading-8 text-muted md:col-span-1 md:max-w-[14rem]">
+      <p
+        class="col-span-2 text-sm leading-8 text-muted md:col-span-1 md:max-w-[14rem]"
+      >
         هفت روز هفته از ۸ صبح تا ۱۲ شب پاسخگو هستیم
       </p>
 
@@ -107,7 +109,7 @@ const bottomSocial: { href: string; label: string; icon: Component }[] = [
               :key="item.label"
               :to="item.href"
               :aria-label="item.label"
-              class="flex size-6 items-center justify-center text-social transition-colors hover:text-social-hover"
+              class="flex size-12 items-center justify-center text-social transition-colors hover:text-social-hover"
             >
               <component :is="item.icon" class="size-6" />
             </NuxtLink>

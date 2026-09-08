@@ -16,7 +16,7 @@ const descriptionParts = computed(() =>
 
 <template>
   <BaseCard as="section" class="!rounded-[32px] p-4 shadow-card md:p-6 lg:p-8">
-    <h2 class="mb-4 text-lg font-bold text-heading lg:mb-6">مشخصات فنی</h2>
+    <h2 class="mb-4 text-lg font-bold leading-7 text-heading lg:mb-6">مشخصات فنی</h2>
 
     <dl class="flex flex-col gap-2">
       <ProductSpecRow label="قیمت">

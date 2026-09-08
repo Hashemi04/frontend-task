@@ -30,7 +30,7 @@ if (!productPending.value && !productError.value && !product.value) {
   throw createError(notFound);
 }
 
-const url = useRequestURL();
+const origin = useSiteOrigin();
 
 usePageSeo({
   title: product.value?.title ?? "محصول",
@@ -59,7 +59,7 @@ useHead(() => ({
           rel: "preload",
           as: "image",
           type: "image/webp",
-          href: `${url.origin}${catalogImage(product.value.image, 640)}`,
+          href: catalogImage(product.value.image, 640),
           fetchPriority: "high",
         },
       ]
@@ -81,7 +81,7 @@ useHead(() => ({
               price: product.value.price,
               priceCurrency: "USD",
               availability: "https://schema.org/InStock",
-              url: `${url.origin}/products/${product.value.id}`,
+              url: `${origin}/products/${product.value.id}`,
             },
             aggregateRating: {
               "@type": "AggregateRating",

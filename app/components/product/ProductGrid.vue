@@ -31,7 +31,8 @@ withDefaults(
         v-for="(product, index) in products"
         :key="product.id"
         :product="product"
-        :priority="index < 4"
+        :priority="index === 0 || index === 1"
+        :eager="index < 4"
       />
     </div>
   </div>

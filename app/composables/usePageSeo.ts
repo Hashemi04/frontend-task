@@ -1,8 +1,8 @@
 export function usePageSeo(options: { title: string, description: string }) {
-  const url = useRequestURL()
+  const origin = useSiteOrigin()
   const route = useRoute()
   const path = route.path === '/' ? '/' : route.path
-  const canonical = `${url.origin}${path}`
+  const canonical = `${origin}${path}`
 
   useSeoMeta({
     title: options.title,
